@@ -4,7 +4,6 @@
 template <typename T> class BlockChain {
 
   struct Block {
-
     Block *prev;
   };
 };
