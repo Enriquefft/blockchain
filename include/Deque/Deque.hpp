@@ -3,6 +3,8 @@
 
 #include <cstddef>
 
+#define BLOCK_SIZE XXXX
+
 template <typename T> class Deque {
 public:
   template <bool IsConst> class Iterator;
@@ -50,6 +52,14 @@ public:
   void clear() noexcept;
   /*insert*/
   template <typename... Args> reference emplace_front(Args &&...args);
+
+private:
+  // Que atributos usar
+  T **m_map;
+  // Tamaño del mapa
+  //
+  //
+  //
 };
 
 #endif // !DEQUE_HPP

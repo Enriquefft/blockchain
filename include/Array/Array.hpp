@@ -35,24 +35,24 @@ public:
 
   // Element access
   constexpr reference at(const size_type &pos);
-  constexpr const_reference at(const size_type &pos) const;
+  [[nodiscard]] constexpr const_reference at(const size_type &pos) const;
   constexpr reference operator[](const size_type &pos);
   constexpr const_reference operator[](const size_type &pos) const;
 
   constexpr reference front();
-  constexpr const_reference front() const;
+  [[nodiscard]] constexpr const_reference front() const;
 
   constexpr reference back();
-  constexpr const_reference back() const;
+  [[nodiscard]] constexpr const_reference back() const;
 
   constexpr pointer data() noexcept;
-  constexpr const_pointer data() const noexcept;
+  [[nodiscard]] constexpr const_pointer data() const noexcept;
 
   // Iterators
   iterator begin() noexcept;
   iterator end() noexcept;
-  const_iterator begin() const noexcept;
-  const_iterator end() const noexcept;
+  [[nodiscard]] const_iterator begin() const noexcept;
+  [[nodiscard]] const_iterator end() const noexcept;
 
   // Capacity
   [[nodiscard]] constexpr bool empty() const noexcept;
@@ -72,5 +72,9 @@ private:
   T *m_data;
   size_type m_size;
 };
+
+// Declaración explicita
+extern template class Array<int>;
+extern template class Array<float>;
 
 #endif // !ARRAY_HPP

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <algorithm>
 using std::cout;
 using std::endl;
 using std::string;
@@ -17,8 +18,10 @@ static string sha256(const string &str) {
   auto *hash = SHA256(str_ptr, str.size(), nullptr);
 
   std::stringstream sst;
+
   for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-    sst << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    sst << std::hex << std::setw(2) << std::setfill('0')
+        << static_cast<int>(hash[i]);
   }
 
   return sst.str();
