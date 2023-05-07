@@ -1,19 +1,14 @@
 cmake_minimum_required(VERSION 3.26)
 
-# find_package(OpenSSL REQUIRED)
-project(
-  DataStructures
-  VERSION 1.0.0
-  DESCRIPTION "Robust implementation of a blockchain data structure"
-  LANGUAGES CXX)
+add_library(BlockChain BlockChain.cpp)
 
-add_executable(ssl_test ssl_test.cpp)
+target_include_directories(BlockChain PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/BlockChain)
 
 # fsanitize
-target_compile_options(ssl_test PRIVATE -fsanitize=address,undefined)
+target_compile_options(BlockChain PRIVATE -fsanitize=address,undefined)
 
 # link sanitize
-target_link_options(ssl_test PRIVATE -fsanitize=address,undefined)
+target_link_options(BlockChain PRIVATE -fsanitize=address,undefined)
 
 find_package(OpenSSL REQUIRED)
-target_link_libraries(ssl_test OpenSSL::Crypto)
+target_link_libraries(BlockChain OpenSSL::Crypto)
