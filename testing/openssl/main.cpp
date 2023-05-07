@@ -3,28 +3,31 @@
 #include <openssl/ts.h>
 #include <sstream>
 #include <string>
+#include <vector>
 
 using std::cout;
 using std::endl;
 using std::string;
 
 static string sha256(const string &str) {
-  unsigned char hash[SHA256_DIGEST_LENGTH];
-  SHA256_CTX sha256;
-  A256_Init(&sha256);
-  SHA256_Update(&sha256, str.c_str(), str.size());
-  SHA256_Final(hash, &sha256);
+
+  // initizalize str_ptr with str.c_str()
+  unsigned char *str_ptr = (unsigned char *)str.c_str();
+
+  auto *hash = SHA256(str_ptr, str.size(), nullptr);
+
   std::stringstream sst;
-  for (unsigned char i : hash) {
-    sst << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(i);
+  for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+    sst << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
   }
+
   return sst.str();
 }
 
 int main() {
   cout << sha256("1234567890_1") << endl;
-  cout << sha256("1234567890_2") << endl;
-  cout << sha256("1234567890_3") << endl;
-  cout << sha256("1234567890_4") << endl;
+  // cout << sha256("1234567890_2") << endl;
+  // cout << sha256("1234567890_3") << endl;
+  // cout << sha256("1234567890_4") << endl;
   return 0;
 }
