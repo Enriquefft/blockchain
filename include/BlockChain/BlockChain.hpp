@@ -1,6 +1,7 @@
 #ifndef BLOCK_CHAIN_HPP
 #define BLOCK_CHAIN_HPP
 
+#include "Person/Person.hpp"
 #include <chrono>
 #include <string>
 

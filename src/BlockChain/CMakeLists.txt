@@ -1,14 +1,39 @@
 cmake_minimum_required(VERSION 3.26)
 
-add_library(BlockChain BlockChain.cpp)
+add_library(BlockChain ${CMAKE_CURRENT_SOURCE_DIR}/BlockChain.cpp)
 
-target_include_directories(BlockChain PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/BlockChain)
+target_compile_features(
+  BlockChain PRIVATE cxx_std_20
+  )
 
-# fsanitize
-target_compile_options(BlockChain PRIVATE -fsanitize=address,undefined)
+# Include include/BlockChainFloder
+get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 
-# link sanitize
-target_link_options(BlockChain PRIVATE -fsanitize=address,undefined)
+target_include_directories(BlockChain PUBLIC ${INCLUDE_FOLDER}/BlockChain)
+
+# Message target_include_directories
+get_target_property(BlockChain_INCLUDE_DIRS BlockChain INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "in_include_directories: ${BlockChain_INCLUDE_DIRS}")
+
+get_target_property(BlockChain_INCLUDE_DIRS BlockChain INCLUDE_DIRECTORIES)
+message(STATUS "in_include_directories: ${BlockChain_INCLUDE_DIRS}")
+
+target_compile_options( BlockChain PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+  $<$<CXX_COMPILER_ID:Clang>:-Weverything>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-c++98-compat>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fsanitize=address,undefined>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fsanitize-address-use-after-scope>
+   $<$<CONFIG:RELEASE>:-Ofast>
+   $<$<CONFIG:DEBUG>:-O0>
+   $<$<CONFIG:DEBUG>:-ggdb3>
+ "-fsanitize=address,undefined"
+)
+
+target_link_options(BlockChain PRIVATE 
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fsanitize=address,undefined>
+  )
 
 find_package(OpenSSL REQUIRED)
 target_link_libraries(BlockChain OpenSSL::Crypto)
