@@ -13,7 +13,7 @@ using std::string;
 static string sha256(const string &str) {
 
   // initizalize str_ptr with str.c_str()
-  unsigned char *str_ptr = (unsigned char *)str.c_str();
+  auto *str_ptr = std::bit_cast<unsigned char *>(str.c_str());
 
   auto *hash = SHA256(str_ptr, str.size(), nullptr);
 
