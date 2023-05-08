@@ -1,3 +1,7 @@
+# Editor files
+/.cache
+
+
 # Prerequisites
 *.d
 
