@@ -1,7 +1,8 @@
-#include "Hash256.hpp"
+#include "SHA256.hpp"
+#include <functional>
 
 namespace Person {
 
-class Hash {};
+template <> struct std::hash<> {};
 
 } // namespace Person

@@ -5,7 +5,7 @@
 #include <openssl/ts.h>
 #include <sstream>
 
-namespace Uils {
+namespace Utils {
 
 static std::string sha256(const std::string &str) {
 
@@ -23,6 +23,6 @@ static std::string sha256(const std::string &str) {
   return sst.str();
 }
 
-} // namespace Uils
+} // namespace Utils
 
 #endif // !SHA256_HPP

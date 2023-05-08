@@ -9,13 +9,6 @@
 #include <unordered_map>
 #include <utility>
 
-/*
- * Warning: This class might not thread-safe
- * */
-
-// NOLINTNEXTLINE
-static std::mt19937 gen{std::random_device{}()};
-
 constexpr std::string_view chars =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()`~"
     "-_=+[{]{|;:'\",<.>/?";
@@ -36,6 +29,7 @@ struct Wallet {
     //                 [&]() { return chars[gen() % chars.size()]; });
 
     // https://stackoverflow.com/questions/63358009/what-is-the-most-efficient-way-to-generate-random-strings-in-c
+    auto gen = getGenerator();
     while (m_wallet_id.size() < ID_LENGTH) {
 
       auto rand = gen();
@@ -50,6 +44,7 @@ struct Wallet {
   void regenId() {
     m_wallet_id.clear();
     m_wallet_id.reserve(ID_LENGTH);
+    auto gen = getGenerator();
     while (m_wallet_id.size() < ID_LENGTH) {
 
       auto rand = gen();
@@ -60,6 +55,11 @@ struct Wallet {
         rand /= CHARS_LENGHT;
       }
     }
+  }
+
+private:
+  static inline std::mt19937 getGenerator() {
+    return std::mt19937(std::random_device{}());
   }
 };
 
