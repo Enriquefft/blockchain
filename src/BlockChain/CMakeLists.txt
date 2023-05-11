@@ -9,11 +9,13 @@ target_compile_features(
 # Include include/BlockChainFloder
 get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 
-target_include_directories(BlockChain PUBLIC ${INCLUDE_FOLDER}/BlockChain ${INCLUDE_FOLDER}/Utils)
+target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER}/BlockChain)
+target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER})
+target_include_directories(BlockChain SYSTEM PRIVATE io1-money/include)
 
 # Message target_include_directories
 get_target_property(BlockChain_INCLUDE_DIRS BlockChain INTERFACE_INCLUDE_DIRECTORIES)
-message(STATUS "in_include_directories: ${BlockChain_INCLUDE_DIRS}")
+message(STATUS "in_interface_include_directories: ${BlockChain_INCLUDE_DIRS}")
 
 get_target_property(BlockChain_INCLUDE_DIRS BlockChain INCLUDE_DIRECTORIES)
 message(STATUS "in_include_directories: ${BlockChain_INCLUDE_DIRS}")
