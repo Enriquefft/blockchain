@@ -4,7 +4,7 @@
 #include "BlockChain.hpp"
 
 // Defines virtual and common methods for search structures
-class SearchStructureBase {};
+template <typename T> class SearchStructureBase {};
 
 // Stores and manages amortization.
 // Calls the appropriate structure to perform the calculation.

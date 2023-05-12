@@ -4,6 +4,8 @@
 #include <initializer_list>
 #include <type_traits>
 
+namespace Utils {
+
 template <typename T> class Array {
 public:
   template <bool IS_CONST> class _iterator;
@@ -76,5 +78,7 @@ private:
 // Declaración explicita
 extern template class Array<int>;
 extern template class Array<float>;
+
+} // namespace Utils
 
 #endif // !ARRAY_HPP

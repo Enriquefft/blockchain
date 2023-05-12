@@ -6,12 +6,19 @@ target_compile_features(
   BlockChain PRIVATE cxx_std_20
   )
 
+target_sources(
+  BlockChain
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR/Data.cpp}
+  )
+
 # Include include/BlockChainFloder
 get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 
 target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER}/BlockChain)
 target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER})
-target_include_directories(BlockChain SYSTEM PRIVATE io1-money/include)
+
+target_include_directories(BlockChain SYSTEM PUBLIC io1-money/include)
 
 # Message target_include_directories
 get_target_property(BlockChain_INCLUDE_DIRS BlockChain INTERFACE_INCLUDE_DIRECTORIES)
