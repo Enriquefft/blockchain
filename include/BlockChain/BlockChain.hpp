@@ -14,7 +14,7 @@ public:
   class Block {
 
   public:
-    std::string currentHash();
+    std::string hash();
 
   private:
     Data data;

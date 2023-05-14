@@ -4,7 +4,6 @@
 #include <chrono>
 #include <string>
 
-#include "Person/Person.hpp"
 #include "io1/money.hpp"
 
 struct Data {
