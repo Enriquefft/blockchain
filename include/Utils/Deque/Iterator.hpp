@@ -33,7 +33,7 @@ struct deque_iterator{
     }
     iterator& operator--(){
         if(current == first){
-            set_node(map_pointer - 1);
+            set_node(node - 1);
             current = last;
         }
         else{
@@ -55,7 +55,7 @@ struct deque_iterator{
             else{
                 node_offset = -((offset - 1) / ptrdiff_t(buff_size)) - 1;
             }
-            set_node(map_pointer + node_offset);
+            set_node(node + node_offset);
             current = first + (offset - node_offset * buff_size);
         }
         return *this;
