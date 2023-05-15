@@ -1,164 +1,195 @@
-#include<iostream>
+#include <iostream>
 #include <memory>
-using namespace std;
+#include <type_traits>
 
-int chunksize = 8;
+// int chunksize = 3;
 
-int chunksize = 3;
+template <typename T, bool IsConst> struct DequeIterator {
 
-//buff_size is the length of the chunk
-template<typename T>
-struct deque_iterator{
-    typedef deque_iterator iterator;
+  using value_type = std::conditional_t<IsConst, const T, T>;
+  using pointer = value_type *;
+  using reference = value_type &;
+  using difference_type = ptrdiff_t;
 
-    T* current;//pointer to the chunk
-    T* first;//begin of the chunk
-    T* last;//end of the chunk
-    T** node;//pointer to the map
+  using map_pointer = pointer *;
+  using iterator = DequeIterator;
 
-    void set_node(T** new_node){//salta a otro chunk
-        node = new_node;
-        first = *new_node;
-        last = first + chunksize;
+  const difference_type CHUNK_SIZE = 512 / sizeof(T);
+
+  pointer current;  // pointer to the chunk
+  pointer first;    // begin of the chunk
+  pointer last;     // end of the chunk
+  map_pointer node; // pointer to the map
+
+  void setNode(map_pointer newNode) { // salta a otro chunk
+    node = newNode;
+    first = *newNode;
+    last = first + CHUNK_SIZE;
+  }
+
+  reference operator*() { return *current; }
+
+  // ++iterator
+  iterator &operator++() {
+    ++current;
+    if (current == last) {
+      setNode(node + 1);
+      current = first;
     }
-    T& operator*()const{return *current;}
-    iterator& operator++(){
-        ++current;
-        if(current == last){
-            set_node(node + 1);
-            current = first;
-        }
-        return *this;
+    return *this;
+  }
+
+  // iterator++
+  iterator operator++(int) {
+    iterator tmp = *this;
+    ++*this;
+    return tmp;
+  }
+
+  // --iterator
+  iterator &operator--() {
+    if (current == first) {
+      setNode(node - 1);
+      current = last;
     }
-    iterator& operator--(){
-        if(current == first){
-            set_node(node -1);
-            current = last;
-        }
-        --current;
-        return *this;
+    --current;
+    return *this;
+  }
+
+  // iterator--
+  iterator operator--(int) {
+    iterator tmp = *this;
+    --*this;
+    return tmp;
+  }
+
+  iterator &operator+=(difference_type steps) {
+    difference_type offset = steps + (current - first);
+    if (offset >= 0 && offset < CHUNK_SIZE) {
+      // same chunk
+      current += steps;
+      return *this;
     }
 
-    iterator& operator+=(ptrdiff_t n){
-        ptrdiff_t  offset = n + (current - first);
-        if(offset >= 0 && offset< ptrdiff_t(chunksize)){
-            current += n;
-        }
-        else{
-            ptrdiff_t node_offset;
-            if(offset > 0){
-                node_offset = offset / ptrdiff_t(chunksize);
-            }
-            else{
-                node_offset = -((offset - 1) / ptrdiff_t(chunksize)) - 1;
-            }
-            set_node(node + node_offset);
-            current = first + (offset - node_offset * chunksize);
-        }
-        return *this;
+    difference_type node_offset = 0;
+
+    // Compute chunks to move
+    if (offset > 0) {
+      node_offset = offset / CHUNK_SIZE;
+    } else {
+      node_offset = -((offset - 1) / CHUNK_SIZE) - 1;
     }
-    iterator operator+(ptrdiff_t n)const{
-        iterator temp = *this;
-        return temp += n;
-    }
-    iterator& operator -=(ptrdiff_t n)const{
-        iterator tmp = *this;
-        return tmp += n;
-    }
-    iterator operator-(ptrdiff_t n)const{
-        iterator tmp = *this;
-        return tmp -= n;
-    }
-    T& operator[](ptrdiff_t n)const{
-        return *(*this + n);
-    }
-    bool operator!=(const iterator& other){
-        return this->current != other.current;
-    }
+    setNode(node + node_offset); // goto new chunk
+
+    current = first + (offset - node_offset * CHUNK_SIZE);
+
+    return *this;
+  }
+
+  iterator operator+(difference_type steps) const {
+    iterator temp = *this;
+    return temp += steps;
+  }
+  iterator &operator-=(difference_type steps) const {
+    iterator tmp = *this;
+    return tmp += steps;
+  }
+  iterator operator-(difference_type steps) const {
+    iterator tmp = *this;
+    return tmp -= steps;
+  }
+
+  reference operator[](difference_type n) { return *(*this + n); }
+
+  bool operator!=(const iterator &other) {
+    return this->current != other.current;
+  }
 };
 
-template<typename T>
-class deque{
+template <typename T> class Deque {
+
 public:
-    typedef deque_iterator<T> iterator;
-    typedef allocator<T> dataAllocator;
-    typedef allocator<T*> mapAllocator;
+  // typedefs
+  using value_type = T;
+  using size_type = size_t;
+  using reference = T &;
+  using const_reference = const T &;
+  using pointer = T *;
+  using const_pointer = const T *;
+  using iterator = DequeIterator<T, false>;
+  using const_iterator = DequeIterator<T, true>;
+  using map_pointer = pointer *;
+
+  // Constructors
+  constexpr Deque();
+
+  explicit Deque(size_t numElements) { fillInitialize(numElements, T()); }
+
+  Deque(size_t num_elements, const T &value) {
+    fillInitialize(num_elements, value);
+  }
+  T &front() { return *start; }
+  T &back() {
+    iterator tmp = finish;
+    --tmp;
+    return *tmp;
+  }
+  T &operator[](size_t n) { return start[n]; }
+  void push_back(const T &value) {
+    *(finish.current) = value;
+    ++finish.current;
+  }
+  void push_front(const T &value) {
+    *(start.current) = value;
+    --start.current;
+  }
+  T &set_front() {
+    iterator tmp = start;
+    ++tmp;
+    return *tmp;
+  }
+  void test() { --start.current; }
+  iterator begin() { return start; }
+  iterator end() { return finish; }
 
 private:
-    T** map;
-    size_t map_size;
-    iterator start;
-    iterator finish;
+  map_pointer map;
+  size_type map_size;
 
-    void create_map_and_nodes(size_t num_elements){
-        size_t num_nodes = num_elements / chunksize;
-        if(num_elements % chunksize !=0){
-            ++num_nodes;
-        }
-        map_size = size_t(std::max(8,int(num_nodes + 2)));
-        mapAllocator  alloc;
-        map = alloc.allocate(map_size);
+  iterator start;
+  iterator finish;
 
-        T** tmp_start = map + (map_size - num_nodes) / 2;
-        T** tmp_finish = tmp_start + num_nodes - 1;
-        T** cur;
-        dataAllocator alloc1;
-        for(T** current = tmp_start;current <= tmp_finish;++current){
-            *current = alloc1.allocate(chunksize);
-        }
+  void createMapAndNodes(size_t numElements) {
 
+    size_t num_nodes = numElements / CHUNK_SIZE;
+    if (numElements % CHUNK_SIZE != 0) {
+      ++num_nodes;
+    }
+    map_size = std::max(8, (num_nodes + 2));
+    mapAllocator alloc;
+    map = alloc.allocate(map_size);
 
-        start.set_node(tmp_start);
-        start.current = start.first;
-
-        finish.set_node(tmp_finish);
-        finish.current = finish.first + num_elements % chunksize;
+    T **tmp_start = map + (map_size - num_nodes) / 2;
+    T **tmp_finish = tmp_start + num_nodes - 1;
+    T **cur;
+    dataAllocator alloc1;
+    for (T **current = tmp_start; current <= tmp_finish; ++current) {
+      *current = alloc1.allocate(CHUNK_SIZE);
     }
 
-    void fill_initialize(size_t n,const T& value){
-        create_map_and_nodes(n);
+    start.set_node(tmp_start);
+    start.current = start.first;
 
-        T* cur;
-        for(cur = start.current; cur != finish.current; ++cur){
-            *cur = value;
-        }
-    }
+    finish.set_node(tmp_finish);
+    finish.current = finish.first + numElements % CHUNK_SIZE;
+  }
 
-public:
-    deque()=default;
-    explicit deque(size_t num_elements){
-        fill_initialize(num_elements,T());
-    }
-    deque(size_t num_elements,const T& value){
-        fill_initialize(num_elements,value);
-    }
-    T& front(){
-        return *start;
-    }
-    T& back(){
-        iterator tmp = finish;
-        --tmp;
-        return *tmp;
-    }
-    T& operator[](size_t n){
-        return start[n];
-    }
-    void push_back(const T& value){
-        *(finish.current) = value;
-        ++finish.current;
-    }
-    void push_front(const T& value){
-        *(start.current) = value;
-        --start.current;
-    }
-    T& set_front(){
-        iterator tmp = start;
-        ++tmp;
-        return *tmp;
-    }
-    void test(){
-        --start.current;
-    }
-    iterator begin(){return start;}
-    iterator end(){return finish;}
+  void fillInitialize(size_type size, const_reference value);
+  //   createMapAndNodes(n);
+  //
+  //   T *cur;
+  //   for (cur = start.current; cur != finish.current; ++cur) {
+  //     *cur = value;
+  //   }
+  // }
 };
