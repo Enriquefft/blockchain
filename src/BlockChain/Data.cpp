@@ -1,59 +1,19 @@
 #include "Data.hpp"
 
-using enum Data::CompareType;
+// Comparator for sorting data
+#define comparison_(type)                                                      \
+  template <Data::CompareType T>                                               \
+  bool Data::Compare<T>::operator()(const Data &data1, const Data &data2)      \
+      const                                                                    \
+    requires(T == Data::CompareType::type)
 
-using CompareType = Data::CompareType;
-template <CompareType T> using Compare = Data::Compare<T>;
-
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::MONEY_ASCENDING)
-{
-  return data1.m_amount > data2.m_amount;
-}
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::MONEY_DESCENDING)
-{
-  return data1.m_amount < data2.m_amount;
-}
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::TIME_ASCENDING)
-{
-  return data1.m_timestamp > data2.m_timestamp;
-}
-
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::TIME_DESCENDING)
-{
-  return data1.m_timestamp < data2.m_timestamp;
-}
-
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::SENDER_NAME_ASCENDING)
-{
-  return data1.m_sender > data2.m_sender;
-}
-
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::SENDER_NAME_DESCENDING)
-{
-  return data1.m_sender < data2.m_sender;
-}
-
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::RECEIVER_NAME_ASCENDING)
-{
-  return data1.m_receiver > data2.m_receiver;
-}
-template <CompareType T>
-bool Compare<T>::operator()(const Data &data1, const Data &data2) const
-  requires(T == CompareType::RECEIVER_NAME_DESCENDING)
-{
-  return data1.m_receiver < data2.m_receiver;
+comparison_(MONEY_ASCENDING) { return data1.amount > data2.amount; }
+comparison_(MONEY_DESCENDING) { return data1.amount < data2.amount; }
+comparison_(TIME_ASCENDING) { return data1.timestamp > data2.timestamp; }
+comparison_(TIME_DESCENDING) { return data1.timestamp < data2.timestamp; }
+comparison_(SENDER_NAME_ASCENDING) { return data1.sender > data2.sender; }
+comparison_(SENDER_NAME_DESCENDING) { return data1.sender < data2.sender; }
+comparison_(RECEIVER_NAME_ASCENDING) { return data1.receiver > data2.receiver; }
+comparison_(RECEIVER_NAME_DESCENDING) {
+  return data1.receiver < data2.receiver;
 }
