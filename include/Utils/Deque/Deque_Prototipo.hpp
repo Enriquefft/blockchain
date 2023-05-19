@@ -1,18 +1,14 @@
-#include <iostream>
-#include <memory>
 #include <type_traits>
-
-// int chunksize = 3;
 
 template <typename T, bool IsConst> struct DequeIterator {
 
+  // Typedefs
   using value_type = std::conditional_t<IsConst, const T, T>;
   using pointer = value_type *;
   using reference = value_type &;
-  using difference_type = ptrdiff_t;
-
   using map_pointer = pointer *;
   using iterator = DequeIterator;
+  using difference_type = std::ptrdiff_t;
 
   const difference_type CHUNK_SIZE = 512 / sizeof(T);
 
@@ -108,10 +104,12 @@ template <typename T, bool IsConst> struct DequeIterator {
 
 template <typename T> class Deque {
 
+  const std::ptrdiff_t CHUNK_SIZE = 512 / sizeof(T);
+
 public:
   // typedefs
   using value_type = T;
-  using size_type = size_t;
+  using size_type = std::size_t;
   using reference = T &;
   using const_reference = const T &;
   using pointer = T *;
@@ -120,13 +118,15 @@ public:
   using const_iterator = DequeIterator<T, true>;
   using map_pointer = pointer *;
 
+  using difference_type = std::ptrdiff_t;
+
   // Constructors
   constexpr Deque();
 
-  explicit Deque(size_t numElements) { fillInitialize(numElements, T()); }
+  explicit Deque(std::size_t numElements) { fillInitialize(numElements, T()); }
 
-  Deque(size_t num_elements, const T &value) {
-    fillInitialize(num_elements, value);
+  Deque(std::size_t numElements, const T &value) {
+    fillInitialize(numElements, value);
   }
   T &front() { return *start; }
   T &back() {
@@ -134,16 +134,17 @@ public:
     --tmp;
     return *tmp;
   }
-  T &operator[](size_t n) { return start[n]; }
-  void push_back(const T &value) {
+  T &operator[](std::size_t n) { return start[n]; }
+
+  void pushBack(const T &value) {
     *(finish.current) = value;
     ++finish.current;
   }
-  void push_front(const T &value) {
+  void pushFront(const T &value) {
     *(start.current) = value;
     --start.current;
   }
-  T &set_front() {
+  T &setFront() {
     iterator tmp = start;
     ++tmp;
     return *tmp;

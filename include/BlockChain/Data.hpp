@@ -42,13 +42,13 @@ struct Data {
   };
 
   Data() = delete;
-  Data(const std::string &originWalletId, const std::string &targetWalletId,
-       const io1::Money &amount);
+  Data(const std::string &_sender, const std::string &_receiver,
+       const io1::Money &_amount);
 
-  io1::Money m_amount;
-  TIME m_timestamp;
-  std::string m_sender;
-  std::string m_receiver;
+  io1::Money amount;
+  TIME timestamp;
+  std::string sender;
+  std::string receiver;
 
   // Comparison Operators
 };
