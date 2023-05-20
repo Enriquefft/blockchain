@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 add_library(BlockChain ${CMAKE_CURRENT_SOURCE_DIR}/BlockChain.cpp)
 
-target_compile_features(BlockChain PRIVATE cxx_std_20)
+set(CMAKE_CXX_STANDARD 20)
 
 target_sources(BlockChain PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Data.cpp)
 
@@ -18,6 +18,10 @@ target_include_directories(BlockChain SYSTEM PUBLIC io1-money/include)
 get_target_property(BlockChain_INCLUDE_DIRS BlockChain
                     INTERFACE_INCLUDE_DIRECTORIES)
 message(STATUS "in_interface_include_directories: ${BlockChain_INCLUDE_DIRS}")
+
+# Get current cxx standard
+get_target_property(MY_CXX_STANDARD BlockChain INTERFACE_COMPILE_FEATURES)
+message(STATUS "cxx_standard: ${MY_CXX_STANDARD}")
 
 get_target_property(BlockChain_INCLUDE_DIRS BlockChain INCLUDE_DIRECTORIES)
 message(STATUS "in_include_directories: ${BlockChain_INCLUDE_DIRS}")
@@ -48,3 +52,5 @@ target_link_options(
 
 find_package(OpenSSL REQUIRED)
 target_link_libraries(BlockChain OpenSSL::Crypto)
+
+target_compile_features(BlockChain PUBLIC cxx_std_20)
