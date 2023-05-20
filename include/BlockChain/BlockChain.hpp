@@ -2,24 +2,23 @@
 #define BLOCK_CHAIN_HPP
 
 #include "Data.hpp"
-
-#include <memory>
+#include <iostream>
 #include <string>
 #include <utility>
 
+#include "Utils/gsl.hpp"
+
 namespace blockchain {
 
-using std::shared_ptr;
+// using std::shared_ptr;
 using std::string;
 
 class BlockChain {
 
-  template <bool IsConst> class BlockChainIterator;
+  // template <bool IsConst> class BlockChainIterator;
 
 public:
   // Typedefs
-  using iterator = BlockChainIterator<false>;
-  using const_iterator = BlockChainIterator<true>;
   using value_type = Data;
   using reference = value_type &;
   using const_reference = const value_type &;
@@ -30,20 +29,39 @@ public:
   [[nodiscard]] reference getLastBlock();
   [[nodiscard]] const_reference getLastBlock() const;
 
-  // Iterators
-  [[nodiscard]] iterator begin();
-  [[nodiscard]] const_iterator begin() const;
+  [[nodiscard]] bool isConsistent() const;
 
-  [[nodiscard]] iterator end();
-  [[nodiscard]] const_iterator end() const;
+  BlockChain() = default;
+
+  ~BlockChain() { delete m_head; }
+
+  // Disable move/copy semantics
+  BlockChain(const BlockChain &) = delete;
+  BlockChain(BlockChain &&) = delete;
+  BlockChain &operator=(const BlockChain &) = delete;
+  BlockChain &operator=(BlockChain &&) = delete;
 
 private:
   class Block {
+
     friend class BlockChain;
 
+    ~Block() {
+
+      // Shoudl the destructor be recursive?
+      // as its inline, the overhead should be to big, right?
+      delete next;
+    }
+
   public:
-    Block(Data _data, shared_ptr<Block> _previous)
-        : data(std::move(_data)), previous(std::move(_previous)) {}
+    // Cant copy or move blocks
+    Block(const Block &) = delete;
+    Block(Block &&) = delete;
+    Block &operator=(const Block &) = delete;
+    Block &operator=(Block &&) = delete;
+
+    Block(Data _data, Block *_previous)
+        : data(std::move(_data)), previous(_previous) {}
     [[nodiscard]] const Data &getData() const;
     [[nodiscard]] Data &getData();
 
@@ -53,49 +71,81 @@ private:
     Data data;
     string previous_hash;
 
-    shared_ptr<Block> next = nullptr;
-    shared_ptr<Block> previous;
+    gsl::owner<Block *> next = nullptr;
+    Block *previous;
   };
 
-  shared_ptr<Block> m_head = nullptr;
-  shared_ptr<Block> m_tail = nullptr;
+  // Block *m_head = nullptr;
+  gsl::owner<Block *> m_head = nullptr;
+  Block *m_tail = nullptr;
 
   template <bool IsConst> class BlockChainIterator {
   public:
     // Typedefs
     // using Block = BlockChain::Block;
     using value_type = std::conditional_t<IsConst, const Data, Data>;
-    using Block = std::conditional_t<IsConst, const Block, Block>;
+    using Block_ = std::conditional_t<IsConst, const Block, Block>;
 
     using reference = value_type &;
     using pointer = value_type *;
     using difference_type = std::ptrdiff_t;
     using iterator = BlockChainIterator<IsConst>;
 
-    explicit BlockChainIterator(const shared_ptr<Block> &ptr) : m_curr(ptr) {}
+    explicit BlockChainIterator(Block *ptr) : m_curr(ptr) {}
 
     BlockChainIterator() = default;
 
     // Comparison
-    bool operator==(const BlockChainIterator &) const;
-    bool operator!=(const BlockChainIterator &) const;
+    // bool operator==(const BlockChainIterator &rhs) const;
+    bool operator==(const BlockChainIterator &rhs) const {
+      return m_curr == rhs.m_curr;
+    }
+    bool operator!=(const BlockChainIterator &rhs) const {
+      return m_curr != rhs.m_curr;
+    }
 
     // Accessors
-    reference operator*();
-    pointer operator->();
+    reference operator*() { return m_curr->data; }
+    pointer operator->() { return m_curr; }
 
     // Increment
-    iterator &operator++();
-    iterator operator++(int);
+    iterator &operator++() {
+      m_curr = m_curr->next;
+      return *this;
+    }
+    iterator operator++(int) {
+      auto *tmp = *this;
+      this->operator++();
+      return tmp;
+    }
+
+    [[maybe_unused, nodiscard]] bool isEnd() const { return m_curr == nullptr; }
 
     // Decrement
-    iterator &operator--();
-    iterator operator--(int);
+    iterator &operator--() {
+      m_curr = m_curr->previous;
+      return *this;
+    }
+    iterator operator--(int) {
+      auto *tmp = *this;
+      this->operator--();
+      return tmp;
+    }
 
   private:
-    shared_ptr<Block> m_curr = nullptr;
+    Block_ *m_curr = nullptr;
   };
-};
+
+public:
+  using iterator = BlockChainIterator<false>;
+  using const_iterator = BlockChainIterator<true>;
+  // Iterators
+  [[nodiscard]] iterator begin();
+  [[nodiscard]] const_iterator begin() const;
+
+  [[nodiscard]] iterator end();
+  [[nodiscard]] const_iterator end() const;
+}; // namespace blockchain
 
 } // namespace blockchain
 

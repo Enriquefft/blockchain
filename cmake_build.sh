@@ -10,9 +10,18 @@ is_sourced(){
   }
 
  # Sample call.
- is_sourced && sourced=1 || sourced=0
+is_sourced && sourced=1 || sourced=0
 
 CXX=clang++ cmake -S . -B build
 cmake --build build
-export ASAN_OPTIONS="strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1"
-echo "Run with source to get the ASAN_OPTIONS environment variable"
+
+
+if [ $sourced = 1 ]; then
+  echo "exporting opetions"
+  export LSAN_OPTIONS="strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:verbose=1:symbolize=1:log_threads=1"
+else
+  echo "Run with source to get the ASAN_OPTIONS environment variable"
+fi
+
+
+

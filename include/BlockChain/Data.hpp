@@ -42,8 +42,7 @@ struct Data {
   };
 
   Data() = delete;
-  Data(const std::string &_sender, const std::string &_receiver,
-       const io1::Money &_amount);
+  Data(std::string _sender, std::string _receiver, const io1::Money &_amount);
 
   io1::Money amount;
   TIME timestamp;

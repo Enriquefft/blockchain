@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
 
-set(CXX)
-
 project(
   cachimbo_coin
   VERSION 1.0.0
@@ -16,18 +14,15 @@ add_subdirectory(src/BlockChain)
 
 target_include_directories(cachimbo_coin PUBLIC include)
 
+get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin
+                    INTERFACE_INCLUDE_DIRECTORIES)
+message(
+  STATUS "main in_interface_include_directories: ${cachimbo_coin_INCLUDE_DIRS}")
 
-get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin INTERFACE_INCLUDE_DIRECTORIES)
-message(STATUS "main in_interface_include_directories: ${cachimbo_coin_INCLUDE_DIRS}")
-
-get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin INCLUDE_DIRECTORIES)
+get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin
+                    INCLUDE_DIRECTORIES)
 message(STATUS "main in_include_directories: ${cachimbo_coin_INCLUDE_DIRS}")
 
 target_link_libraries(cachimbo_coin PRIVATE BlockChain)
 
-target_compile_features(
-  cachimbo_coin PRIVATE cxx_std_20
-  )
-
-
-set(CMAKE_CXX_STANDARD 20)
+target_compile_features(cachimbo_coin PRIVATE cxx_std_20)
