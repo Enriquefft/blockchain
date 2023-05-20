@@ -1,0 +1,9 @@
+-- in_interface_include_directories: /home/enrique/Documents/aeda/blockchain/include/BlockChain;/home/enrique/Documents/aeda/blockchain/src/BlockChain/io1-money/include
+-- in_include_directories: /home/enrique/Documents/aeda/blockchain/include/BlockChain;/home/enrique/Documents/aeda/blockchain/include;/home/enrique/Documents/aeda/blockchain/src/BlockChain/io1-money/include
+-- main in_interface_include_directories: /home/enrique/Documents/aeda/blockchain/include
+-- main in_include_directories: /home/enrique/Documents/aeda/blockchain/include
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/enrique/Documents/aeda/blockchain/build
+[ 50%] Built target BlockChain
+[ 75%] Linking CXX executable cachimbo_coin

@@ -10,11 +10,11 @@ void BlockChain::addBlock(const Data &data) {
 
   if (m_head == nullptr) {
     m_head = std::make_shared<Block>(data, nullptr);
-    m_head->previous = m_head;
     m_tail = m_head;
     return;
   }
   m_tail->next = std::make_shared<Block>(data, m_tail);
+  m_tail = m_tail->next;
 }
 
 static string Sha256(std::string_view str) {
@@ -53,51 +53,53 @@ BlockChain::const_iterator BlockChain::begin() const {
 
 BlockChain::const_iterator BlockChain::end() const { return {}; }
 
-template <bool IsConst>
-using iterator_td = typename BlockChain::BlockChainIterator<IsConst>;
+// template <bool IsConst>
+// using iterator_td = typename BlockChain::BlockChainIterator<IsConst>;
 
-template <bool IsConst>
-bool iterator_td<IsConst>::operator==(const iterator &rhs) const {
-  return m_curr == rhs.m_curr;
-}
-
-template <bool IsConst>
-bool iterator_td<IsConst>::operator!=(const iterator &rhs) const {
-  return m_curr != rhs.m_curr;
-}
-
-template <bool IsConst>
-typename iterator_td<IsConst>::reference iterator_td<IsConst>::operator*() {
-  return *m_curr;
-}
-
-template <bool IsConst>
-typename iterator_td<IsConst>::pointer iterator_td<IsConst>::operator->() {
-  return m_curr;
-}
-
-template <bool IsConst>
-typename iterator_td<IsConst>::iterator &iterator_td<IsConst>::operator++() {
-  m_curr = m_curr->next;
-  return *this;
-}
-
-template <bool IsConst>
-typename iterator_td<IsConst>::iterator iterator_td<IsConst>::operator++(int) {
-  auto tmp = *this;
-  this->operator++();
-  return tmp;
-}
-
-template <bool IsConst>
-typename iterator_td<IsConst>::iterator &iterator_td<IsConst>::operator--() {
-  m_curr = m_curr->previous;
-  return *this;
-}
-
-template <bool IsConst>
-typename iterator_td<IsConst>::iterator iterator_td<IsConst>::operator--(int) {
-  auto tmp = *this;
-  this->operator--();
-  return tmp;
-}
+// template <bool IsConst>
+// bool iterator_td<IsConst>::operator==(const iterator &rhs) const {
+//   return m_curr == rhs.m_curr;
+// }
+//
+// template <bool IsConst>
+// bool iterator_td<IsConst>::operator!=(const iterator &rhs) const {
+//   return m_curr != rhs.m_curr;
+// }
+//
+// template <bool IsConst>
+// typename iterator_td<IsConst>::reference iterator_td<IsConst>::operator*() {
+//   return m_curr;
+// }
+//
+// template <bool IsConst>
+// typename iterator_td<IsConst>::pointer iterator_td<IsConst>::operator->() {
+//   return m_curr;
+// }
+//
+// template <bool IsConst>
+// typename iterator_td<IsConst>::iterator &iterator_td<IsConst>::operator++() {
+//   m_curr = m_curr->next;
+//   return *this;
+// }
+//
+// template <bool IsConst>
+// typename iterator_td<IsConst>::iterator iterator_td<IsConst>::operator++(int)
+// {
+//   auto tmp = *this;
+//   this->operator++();
+//   return tmp;
+// }
+//
+// template <bool IsConst>
+// typename iterator_td<IsConst>::iterator &iterator_td<IsConst>::operator--() {
+//   m_curr = m_curr->previous;
+//   return *this;
+// }
+//
+// template <bool IsConst>
+// typename iterator_td<IsConst>::iterator iterator_td<IsConst>::operator--(int)
+// {
+//   auto tmp = *this;
+//   this->operator--();
+//   return tmp;
+// }
