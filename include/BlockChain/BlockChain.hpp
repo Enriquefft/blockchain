@@ -2,14 +2,15 @@
 #define BLOCK_CHAIN_HPP
 
 #include "Data.hpp"
-
-#include <memory>
+#include <iostream>
 #include <string>
 #include <utility>
 
+#include "Utils/gsl.hpp"
+
 namespace blockchain {
 
-using std::shared_ptr;
+// using std::shared_ptr;
 using std::string;
 
 class BlockChain {
@@ -32,13 +33,35 @@ public:
 
   BlockChain() = default;
 
+  ~BlockChain() { delete m_head; }
+
+  // Disable move/copy semantics
+  BlockChain(const BlockChain &) = delete;
+  BlockChain(BlockChain &&) = delete;
+  BlockChain &operator=(const BlockChain &) = delete;
+  BlockChain &operator=(BlockChain &&) = delete;
+
 private:
   class Block {
+
     friend class BlockChain;
 
+    ~Block() {
+
+      // Shoudl the destructor be recursive?
+      // as its inline, the overhead should be to big, right?
+      delete next;
+    }
+
   public:
-    Block(Data _data, shared_ptr<Block> _previous)
-        : data(std::move(_data)), previous(std::move(_previous)) {}
+    // Cant copy or move blocks
+    Block(const Block &) = delete;
+    Block(Block &&) = delete;
+    Block &operator=(const Block &) = delete;
+    Block &operator=(Block &&) = delete;
+
+    Block(Data _data, Block *_previous)
+        : data(std::move(_data)), previous(_previous) {}
     [[nodiscard]] const Data &getData() const;
     [[nodiscard]] Data &getData();
 
@@ -48,12 +71,13 @@ private:
     Data data;
     string previous_hash;
 
-    shared_ptr<Block> next = nullptr;
-    shared_ptr<Block> previous;
+    gsl::owner<Block *> next = nullptr;
+    Block *previous;
   };
 
-  shared_ptr<Block> m_head = nullptr;
-  shared_ptr<Block> m_tail = nullptr;
+  // Block *m_head = nullptr;
+  gsl::owner<Block *> m_head = nullptr;
+  Block *m_tail = nullptr;
 
   template <bool IsConst> class BlockChainIterator {
   public:
@@ -67,7 +91,7 @@ private:
     using difference_type = std::ptrdiff_t;
     using iterator = BlockChainIterator<IsConst>;
 
-    explicit BlockChainIterator(const shared_ptr<Block_> &ptr) : m_curr(ptr) {}
+    explicit BlockChainIterator(Block *ptr) : m_curr(ptr) {}
 
     BlockChainIterator() = default;
 
@@ -109,7 +133,7 @@ private:
     }
 
   private:
-    shared_ptr<Block_> m_curr = nullptr;
+    Block_ *m_curr = nullptr;
   };
 
 public:
@@ -121,7 +145,7 @@ public:
 
   [[nodiscard]] iterator end();
   [[nodiscard]] const_iterator end() const;
-};
+}; // namespace blockchain
 
 } // namespace blockchain
 

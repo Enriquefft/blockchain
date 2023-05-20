@@ -9,11 +9,11 @@ using std::string;
 void BlockChain::addBlock(const Data &data) {
 
   if (m_head == nullptr) {
-    m_head = std::make_shared<Block>(data, nullptr);
+    m_head = new Block(data, nullptr);
     m_tail = m_head;
     return;
   }
-  m_tail->next = std::make_shared<Block>(data, m_tail);
+  m_tail->next = new Block(data, m_tail);
   m_tail = m_tail->next;
 }
 
