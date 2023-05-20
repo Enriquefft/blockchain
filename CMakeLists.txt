@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.25)
 
 set(CXX)
 
@@ -28,3 +28,6 @@ target_link_libraries(cachimbo_coin PRIVATE BlockChain)
 target_compile_features(
   cachimbo_coin PRIVATE cxx_std_20
   )
+
+
+set(CMAKE_CXX_STANDARD 20)
