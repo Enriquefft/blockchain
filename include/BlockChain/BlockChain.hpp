@@ -24,12 +24,17 @@ public:
   using const_reference = const value_type &;
   using pointer = value_type *;
 
+  using size_type = size_t;
+
   void addBlock(const Data &data);
 
   [[nodiscard]] reference getLastBlock();
   [[nodiscard]] const_reference getLastBlock() const;
 
   [[nodiscard]] bool isConsistent() const;
+
+  void randomInyection();
+  [[nodiscard]] size_type size() const;
 
   BlockChain() = default;
 
@@ -97,40 +102,20 @@ private:
 
     // Comparison
     // bool operator==(const BlockChainIterator &rhs) const;
-    bool operator==(const BlockChainIterator &rhs) const {
-      return m_curr == rhs.m_curr;
-    }
-    bool operator!=(const BlockChainIterator &rhs) const {
-      return m_curr != rhs.m_curr;
-    }
+    bool operator==(const BlockChainIterator &rhs) const;
+    bool operator!=(const BlockChainIterator &rhs) const;
 
     // Accessors
-    reference operator*() { return m_curr->data; }
-    pointer operator->() { return m_curr; }
+    reference operator*();
+    pointer operator->();
 
     // Increment
-    iterator &operator++() {
-      m_curr = m_curr->next;
-      return *this;
-    }
-    iterator operator++(int) {
-      auto *tmp = *this;
-      this->operator++();
-      return tmp;
-    }
-
-    [[maybe_unused, nodiscard]] bool isEnd() const { return m_curr == nullptr; }
+    iterator &operator++();
+    iterator operator++(int);
 
     // Decrement
-    iterator &operator--() {
-      m_curr = m_curr->previous;
-      return *this;
-    }
-    iterator operator--(int) {
-      auto *tmp = *this;
-      this->operator--();
-      return tmp;
-    }
+    iterator &operator--();
+    iterator operator--(int);
 
   private:
     Block_ *m_curr = nullptr;

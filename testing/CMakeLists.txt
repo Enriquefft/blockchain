@@ -6,8 +6,8 @@ project(
   DESCRIPTION "Cachimbo Coin"
   LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-add_executable(main main.cpp)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_executable(main main.cpp)
 
 target_compile_features(main PRIVATE cxx_std_20)
