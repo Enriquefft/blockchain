@@ -65,8 +65,7 @@ private:
     Block &operator=(const Block &) = delete;
     Block &operator=(Block &&) = delete;
 
-    Block(Data _data, Block *_previous)
-        : data(std::move(_data)), previous(_previous) {}
+    Block(Data _data, Block *_previous);
     [[nodiscard]] const Data &getData() const;
     [[nodiscard]] Data &getData();
 
@@ -130,7 +129,10 @@ public:
 
   [[nodiscard]] iterator end();
   [[nodiscard]] const_iterator end() const;
-}; // namespace blockchain
+};
+
+extern template class BlockChain::BlockChainIterator<true>;
+extern template class BlockChain::BlockChainIterator<false>;
 
 } // namespace blockchain
 

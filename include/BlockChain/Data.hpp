@@ -10,6 +10,17 @@ struct Data {
 
   using TIME = std::chrono::time_point<std::chrono::utc_clock>;
 
+  Data() = delete;
+  Data(std::string _sender, std::string _receiver, const io1::Money &_amount);
+
+  io1::Money amount;
+  TIME timestamp;
+  std::string sender;
+  std::string receiver;
+
+  // cout
+  friend std::ostream &operator<<(std::ostream &ost, const Data &data);
+
   enum class CompareType {
     MONEY_ASCENDING,
     MONEY_DESCENDING,
@@ -40,16 +51,6 @@ struct Data {
     bool operator()(const Data &data1, const Data &data2) const
       requires(T == CompareType::RECEIVER_NAME_DESCENDING);
   };
-
-  Data() = delete;
-  Data(std::string _sender, std::string _receiver, const io1::Money &_amount);
-
-  io1::Money amount;
-  TIME timestamp;
-  std::string sender;
-  std::string receiver;
-
-  // Comparison Operators
 };
 
 #endif // DATA_HPP

@@ -24,3 +24,9 @@ Data::Data(std::string _sender, std::string _receiver,
            const io1::Money &_amount)
     : amount(_amount), timestamp(std::chrono::utc_clock::now()),
       sender(std::move(_sender)), receiver(std::move(_receiver)) {}
+
+std::ostream &operator<<(std::ostream &ost, const Data &data) {
+  ost << "Data(sender=" << data.sender << ", receiver=" << data.receiver
+      << ", amount=" << data.amount << ", timestamp=" << data.timestamp << ")";
+  return ost;
+}

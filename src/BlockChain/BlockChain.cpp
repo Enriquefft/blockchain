@@ -20,6 +20,11 @@ void BlockChain::addBlock(const Data &data) {
   m_tail = m_tail->next;
 }
 
+BlockChain::Block::Block(Data _data, Block *_previous)
+    : data(std::move(_data)),
+      previous_hash(_previous != nullptr ? _previous->hash() : ""),
+      previous(_previous) {}
+
 BlockChain::reference BlockChain::getLastBlock() { return m_tail->data; }
 BlockChain::const_reference BlockChain::getLastBlock() const {
   return m_tail->data;
@@ -28,12 +33,20 @@ BlockChain::const_reference BlockChain::getLastBlock() const {
 // O(n) + n*hash
 bool BlockChain::isConsistent() const {
 
+  if (m_head == nullptr) {
+    return true;
+  }
+
   auto *curr = m_head->next;
 
+  auto c = 1;
   for (; curr != nullptr; curr = curr->next) {
     if (curr->previous->hash() != curr->previous_hash) {
+      std::cout << "block " << c << " is not consistent\n";
       return false;
     }
+    std::cout << "block " << c << " is consistent\n";
+    c++;
   }
 
   return true;
