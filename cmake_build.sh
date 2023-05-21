@@ -12,7 +12,7 @@ is_sourced(){
  # Sample call.
 is_sourced && sourced=1 || sourced=0
 
-CXX=clang++ cmake -S . -B build
+CXX=g++ cmake -S . -B build
 cmake --build build
 
 

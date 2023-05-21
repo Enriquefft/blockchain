@@ -84,6 +84,7 @@ private:
   gsl::owner<Block *> m_head = nullptr;
   Block *m_tail = nullptr;
 
+public:
   template <bool IsConst> class BlockChainIterator {
   public:
     // Typedefs
@@ -94,7 +95,7 @@ private:
     using reference = value_type &;
     using pointer = value_type *;
     using difference_type = std::ptrdiff_t;
-    using iterator = BlockChainIterator<IsConst>;
+    // using iterator = BlockChainIterator<IsConst>;
 
     explicit BlockChainIterator(Block *ptr) : m_curr(ptr) {}
 
@@ -110,18 +111,17 @@ private:
     pointer operator->();
 
     // Increment
-    iterator &operator++();
-    iterator operator++(int);
+    BlockChainIterator &operator++();
+    BlockChainIterator operator++(int);
 
     // Decrement
-    iterator &operator--();
-    iterator operator--(int);
+    BlockChainIterator &operator--();
+    BlockChainIterator operator--(int);
 
   private:
     Block_ *m_curr = nullptr;
   };
 
-public:
   using iterator = BlockChainIterator<false>;
   using const_iterator = BlockChainIterator<true>;
   // Iterators

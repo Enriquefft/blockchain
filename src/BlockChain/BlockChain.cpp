@@ -105,51 +105,63 @@ BlockChain::const_iterator BlockChain::begin() const {
 
 BlockChain::const_iterator BlockChain::end() const { return {}; }
 
-template <bool IsConst>
-using iterator_td = typename BlockChain::BlockChainIterator<IsConst>;
+// template <bool IsConst>
+// using iterator_td = typename BlockChain::BlockChainIterator<IsConst>;
 
 template <bool IsConst>
-bool iterator_td<IsConst>::operator==(const iterator &rhs) const {
+bool BlockChain::BlockChainIterator<IsConst>::operator==(
+    const BlockChainIterator &rhs) const {
   return m_curr == rhs.m_curr;
 }
 
 template <bool IsConst>
-bool iterator_td<IsConst>::operator!=(const iterator &rhs) const {
+bool BlockChain::BlockChainIterator<IsConst>::operator!=(
+    const BlockChainIterator &rhs) const {
   return m_curr != rhs.m_curr;
 }
 
 template <bool IsConst>
-typename iterator_td<IsConst>::reference iterator_td<IsConst>::operator*() {
+typename BlockChain::BlockChainIterator<IsConst>::reference
+BlockChain::BlockChainIterator<IsConst>::operator*() {
   return m_curr->data;
 }
 
 template <bool IsConst>
-typename iterator_td<IsConst>::pointer iterator_td<IsConst>::operator->() {
+typename BlockChain::BlockChainIterator<IsConst>::pointer
+BlockChain::BlockChainIterator<IsConst>::operator->() {
   return &m_curr->data;
 }
 
 template <bool IsConst>
-typename iterator_td<IsConst>::iterator &iterator_td<IsConst>::operator++() {
+BlockChain::BlockChainIterator<IsConst> &
+BlockChain::BlockChainIterator<IsConst>::operator++() {
   m_curr = m_curr->next;
   return *this;
 }
 
 template <bool IsConst>
-typename iterator_td<IsConst>::iterator iterator_td<IsConst>::operator++(int) {
+BlockChain::BlockChainIterator<IsConst>
+BlockChain::BlockChainIterator<IsConst>::operator++(int) {
   auto tmp = *this;
   this->operator++();
   return tmp;
 }
 
 template <bool IsConst>
-typename iterator_td<IsConst>::iterator &iterator_td<IsConst>::operator--() {
+BlockChain::BlockChainIterator<IsConst> &
+BlockChain::BlockChainIterator<IsConst>::operator--() {
   m_curr = m_curr->previous;
   return *this;
 }
 
 template <bool IsConst>
-typename iterator_td<IsConst>::iterator iterator_td<IsConst>::operator--(int) {
+BlockChain::BlockChainIterator<IsConst>
+BlockChain::BlockChainIterator<IsConst>::operator--(int) {
   auto tmp = *this;
   this->operator--();
   return tmp;
 }
+
+// Explicit instantiation
+template class BlockChain::BlockChainIterator<true>;
+template class BlockChain::BlockChainIterator<false>;
