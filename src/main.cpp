@@ -1,10 +1,26 @@
 #include "BlockChain.hpp"
+// #include "Utils/Deque/Deque.hpp"
 #include <ios>
 #include <iostream>
 
 using std::cout;
+// using Utils::Deque;
 
 int main() {
+
+  // Deque<int> d;
+  //
+  // d.push_back(1);
+  // d.push_back(2);
+  // d.pop_back();
+  // d.push_front(0);
+  //
+  // for (auto i : d) {
+  //   cout << i << " ";
+  // }
+  // for (const auto &i : d) {
+  //   cout << i << " ";
+  // }
 
   blockchain::BlockChain b_chain;
   b_chain.addBlock(Data("me", "you", io1::Money(10)));

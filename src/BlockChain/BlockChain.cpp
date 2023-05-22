@@ -58,7 +58,7 @@ void BlockChain::randomInyection() {
   std::default_random_engine gen{std::random_device{}()};
 
   size_type data_idx =
-      std::uniform_int_distribution<size_type>{0, this->size()}(gen);
+      std::uniform_int_distribution<size_type>{0, this->size() - 1}(gen);
 
   auto data = begin();
   std::advance(data, data_idx);
@@ -142,7 +142,10 @@ BlockChain::BlockChainIterator<IsConst>::operator*() {
 template <bool IsConst>
 typename BlockChain::BlockChainIterator<IsConst>::pointer
 BlockChain::BlockChainIterator<IsConst>::operator->() {
-  return &m_curr->data;
+  if (m_curr == nullptr) {
+    throw std::out_of_range("iterator out of range");
+  }
+  return &(m_curr->data);
 }
 
 template <bool IsConst>
