@@ -1,15 +1,29 @@
 cmake_minimum_required(VERSION 3.25)
 
 project(
-  testing
+  cachimbo_coin
   VERSION 1.0.0
   DESCRIPTION "Cachimbo Coin"
   LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(testing test.cpp)
+add_executable(cachimbo_coin src/main.cpp)
 
-target_compile_features(testing PRIVATE cxx_std_23)
+add_subdirectory(src/BlockChain)
+
+target_include_directories(cachimbo_coin PUBLIC include)
+
+get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin
+                    INTERFACE_INCLUDE_DIRECTORIES)
+message(
+  STATUS "main in_interface_include_directories: ${cachimbo_coin_INCLUDE_DIRS}")
+
+get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin
+                    INCLUDE_DIRECTORIES)
+message(STATUS "main in_include_directories: ${cachimbo_coin_INCLUDE_DIRS}")
+
+target_link_libraries(cachimbo_coin PRIVATE BlockChain)
+
+target_compile_features(cachimbo_coin PRIVATE cxx_std_20)
