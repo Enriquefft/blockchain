@@ -1,13 +1,17 @@
-#include "Utils/Deque/Deque_Prototipo.hpp"
+// #include "Utils/Deque/Deque_Prototipo.hpp"
 
 // PRIVATE
 
-template <typename T>
-void Deque<T>::fillInitialize(size_t size, const_reference value) {
+// template <typename T>
+// void Deque<T>::fillInitialize(size_t size, const_reference value) {
 
-  createMapAndNodes(size);
+//   createMapAndNodes(size);
 
-  for (pointer cur = start.current; cur != finish.current; ++cur) {
-    *cur = value;
-  }
-}
+//   for (pointer cur = start.current; cur != finish.current; ++cur) {
+//     *cur = value;
+//   }
+// }
+
+
+
+

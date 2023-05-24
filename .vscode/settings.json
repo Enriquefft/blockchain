@@ -1,0 +1,6 @@
+{
+    "clangd.path": "clangd",
+    "clangd.arguments": ["--background-index"],
+    "clangd.semanticHighlighting": true,
+    "clangd.diagnostics.warnings": true
+}
