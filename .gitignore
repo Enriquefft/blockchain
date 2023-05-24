@@ -1,7 +1,8 @@
 # Editor files
 /.cache
 /.vscode
-# src/test.cpp
+
+src/test.cpp
 /src/test.cpp
 
 
