@@ -1,6 +1,7 @@
 # Editor files
 /.cache
 /.vscode
+src/test.cpp
 
 
 # Prerequisites
