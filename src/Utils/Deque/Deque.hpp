@@ -14,6 +14,20 @@ public:
     using iterator = DequeIterator<T>;
     using map_pointer = pointer*;
 
+    Deque(){
+        map_size = 24 / CHUNK_SIZE;
+        map = new pointer[map_size];
+        map_pointer tmp_start = map + (map_size / 2);
+        map_pointer tmp_finish = map + (map_size / 2);
+        
+        for(int i=0;i<map_size;i++){
+            map[i] = new value_type[CHUNK_SIZE];
+        }
+        start.setNode(tmp_start);
+        start.current = start.first;
+        finish.setNode(tmp_finish);
+        finish.current = start.first + 1;
+    }
     explicit Deque(size_type numElements){
         map_size = numElements / CHUNK_SIZE;
         map = new pointer[map_size];
