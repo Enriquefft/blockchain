@@ -1,20 +1,38 @@
-// #include "BlockChain.hpp"
-// #include "Utils/Deque/Deque.hpp"
-#include <ios>
-#include <iostream>
-#include "Utils/Deque/Deque.hpp"
-
-
-using std::cout;
-using std::endl;
-// using Utils::Deque;
+#include "BlockChain.hpp"
 
 int main() {
-  Deque<int>* d1 = new Deque<int>(24);
-  d1->pushBack(2);
-  d1->pushFront(1);
-  cout<<d1->front()<<" "<<d1->back()<<endl;
+  // Deque<int> d;
+  //
+  // d.push_back(1);
+  // d.push_back(2);
+  // d.pop_back();
+  // d.push_front(0);
+  //
+  // for (auto i : d) {
+  //   cout << i << " ";
+  // }
+  // for (const auto &i : d) {
+  //   cout << i << " ";
+  // }
 
+  blockchain::BlockChain b_chain;
+  b_chain.addBlock(Data("me", "you", io1::Money(10)));
+  b_chain.addBlock(Data("you", "me", io1::Money(20)));
+  b_chain.addBlock(Data("1", "2", io1::Money(30)));
+  b_chain.addBlock(Data("he", "she", io1::Money(40)));
+
+  for (const auto &data : b_chain) {
+    cout << data << std::endl;
+  }
+
+  cout << "isConsistent?: \n"
+       << std::boolalpha << b_chain.isConsistent() << std::endl;
+
+  cout << "randomInyection" << std::endl;
+  b_chain.randomInyection();
+
+  cout << "isConsistent?: " << std::boolalpha << b_chain.isConsistent()
+       << std::endl;
 
   return 0;
 }

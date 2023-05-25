@@ -1,5 +1,7 @@
-<!-- Mejor compatibilidad -->
+<!-- Image url format -->
+<!-- https://github.com/Enriquefft/blockchain/blob/main/Readme/name.png?raw=true-->
 
+<!-- Mejor compatibilidad -->
 <a name="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
@@ -8,13 +10,13 @@
 <!-- logo y titulo -->
 <div align="center">
   <a href="https://github.com/CS1103/proyecto-final-grupo-5-1">
-    <img src="MD_files/Hex.jpg" alt="hex board" width="150" height="150">
+    <img src="https://github.com/Enriquefft/blockchain/blob/main/Readme/logo.png?raw=true" alt="TecCoin logo" width="150" height="150">
   </a>
-  <h1> TecCoin </h1>
+  <h1>🚀₿coin TecCoin₿🚀</h1>
   
   <p>
-  Hola! 👨‍💻. Somos estudiantes del curso de Programación III de la Universidad de Ingeniería y Tecnología de Lima, Perú.  
-  Hemos aplicado conocimientos aprendidos durante el curso de Programación para desarrollar el juego Hex en C++.
+  Hola! 👨‍💻. Somos estudiantes del curso de Programación IV de la Universidad de Ingeniería y Tecnología de Lima, Perú.  
+  Hemos utilizado la tecnologia blockchain para el desarrollo de una criptomoneda para la comunidad utecsina.
   </p>
 </div>
 

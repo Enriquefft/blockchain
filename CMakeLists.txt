@@ -6,23 +6,14 @@ project(
   DESCRIPTION "Cachimbo Coin"
   LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+# set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(cachimbo_coin src/main.cpp)
+add_executable(cachimbo_coin src/test.cpp)
 
 add_subdirectory(src/BlockChain)
 
 target_include_directories(cachimbo_coin PUBLIC include)
-
-get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin
-                    INTERFACE_INCLUDE_DIRECTORIES)
-message(
-  STATUS "main in_interface_include_directories: ${cachimbo_coin_INCLUDE_DIRS}")
-
-get_target_property(cachimbo_coin_INCLUDE_DIRS cachimbo_coin
-                    INCLUDE_DIRECTORIES)
-message(STATUS "main in_include_directories: ${cachimbo_coin_INCLUDE_DIRS}")
 
 target_link_libraries(cachimbo_coin PRIVATE BlockChain)
 
