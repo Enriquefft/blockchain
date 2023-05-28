@@ -20,8 +20,7 @@ comparison_(RECEIVER_NAME_DESCENDING) {
   return data1.receiver < data2.receiver;
 }
 
-Data::Data(std::string _sender, std::string _receiver,
-           const io1::Money &_amount)
+Data::Data(std::string _sender, std::string _receiver, const Credit &_amount)
     : amount(_amount), timestamp(std::chrono::utc_clock::now()),
       sender(std::move(_sender)), receiver(std::move(_receiver)) {}
 

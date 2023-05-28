@@ -1,3 +1,0 @@
-[submodule "src/BlockChain/io1-money"]
-	path = src/BlockChain/io1-money
-	url = https://github.com/yobeonline/io1-money

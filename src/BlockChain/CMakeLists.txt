@@ -10,8 +10,6 @@ get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 target_include_directories(BlockChain PUBLIC ${INCLUDE_FOLDER}/BlockChain)
 target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER})
 
-target_include_directories(BlockChain SYSTEM PUBLIC io1-money/include)
-
 target_compile_options(
   BlockChain
   PRIVATE # Prefered warnings

@@ -4,16 +4,16 @@
 #include <chrono>
 #include <string>
 
-#include "io1/money.hpp"
+#include "Credit/Credit.hpp"
 
 struct Data {
 
   using TIME = std::chrono::time_point<std::chrono::utc_clock>;
 
   Data() = delete;
-  Data(std::string _sender, std::string _receiver, const io1::Money &_amount);
+  Data(std::string _sender, std::string _receiver, const Credit &_amount);
 
-  io1::Money amount;
+  Credit amount;
   TIME timestamp;
   std::string sender;
   std::string receiver;

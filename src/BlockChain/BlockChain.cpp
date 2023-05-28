@@ -64,7 +64,7 @@ void BlockChain::randomInyection() {
   std::advance(data, data_idx);
 
   // Randomize all 4 values
-  data->amount = io1::Money(std::uniform_int_distribution<int>{0, 100}(gen));
+  data->amount = std::uniform_int_distribution<uint8_t>{0, 4}(gen);
   data->timestamp = std::chrono::utc_clock::now();
   data->sender = "RANDOM_SENDER" + std::to_string(data_idx);
   data->receiver = "RANDOM_RECEIVER" + std::to_string(data_idx);
@@ -99,7 +99,7 @@ static string Sha256(std::string_view str) {
 }
 
 string BlockChain::Block::hash() {
-  return Sha256(previous_hash + std::to_string(data.amount.data()) +
+  return Sha256(previous_hash + std::to_string(static_cast<int>(data.amount)) +
                 std::format("{:%Y%m%d%H%M}", data.timestamp) + data.sender +
                 data.receiver);
 }

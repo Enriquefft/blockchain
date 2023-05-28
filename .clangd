@@ -11,6 +11,8 @@ CompileFlags:
       - "-fsanitize=undefined"
       - "-Wno-c++98-compat"
       - "-Wno-c++98-compat-pedantic"
+      - "-Wno-c++98-compat-pedantic"
+      - "-Wno-zero-as-null-pointer-constant"
 
 Diagnostics:
 
