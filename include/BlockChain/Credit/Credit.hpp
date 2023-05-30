@@ -39,7 +39,7 @@ public:
   }
 
   friend std::ostream &operator<<(std::ostream &ost, const Credit &credit) {
-    ost << credit.amount;
+    ost << static_cast<int>(credit.amount);
     return ost;
   }
 

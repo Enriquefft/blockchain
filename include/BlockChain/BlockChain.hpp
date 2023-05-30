@@ -2,6 +2,8 @@
 #define BLOCK_CHAIN_HPP
 
 #include "Data.hpp"
+#include <array>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <utility>
@@ -10,12 +12,13 @@
 
 namespace blockchain {
 
-// using std::shared_ptr;
 using std::string;
+
+using sha_256_t = std::array<uint8_t, 32 /* SHA256_DIGEST_LENGTH*/>;
 
 class BlockChain {
 
-  // template <bool IsConst> class BlockChainIterator;
+  inline static const uint8_t TARGET = 10;
 
 public:
   // Typedefs
@@ -26,6 +29,7 @@ public:
 
   using size_type = size_t;
 
+  void addBlock(const Data &data, const sha_256_t &hash, const uint8_t &nonce);
   void addBlock(const Data &data);
 
   [[nodiscard]] reference getLastBlock();
@@ -36,7 +40,7 @@ public:
   void randomInyection();
   [[nodiscard]] size_type size() const;
 
-  BlockChain() = default;
+  BlockChain() noexcept;
 
   ~BlockChain() { delete m_head; }
 
@@ -49,14 +53,20 @@ public:
 private:
   class Block {
 
+    struct Header {
+      sha_256_t previous_hash;
+      sha_256_t current_hash{};
+      uint8_t nounce = 0;
+      explicit Header(const sha_256_t &prevHahs) : previous_hash(prevHahs) {}
+      explicit Header(const sha_256_t &prevHahs, const sha_256_t &hash,
+                      const uint8_t &nonce)
+          : previous_hash(prevHahs), current_hash(hash), nounce(nonce) {}
+    };
+
     friend class BlockChain;
 
-    ~Block() {
-
-      // Shoudl the destructor be recursive?
-      // as its inline, the overhead should be to big, right?
-      delete next;
-    }
+    ~Block() { delete next; }
+    Block(); // Genesis
 
   public:
     // Cant copy or move blocks
@@ -66,17 +76,19 @@ private:
     Block &operator=(Block &&) = delete;
 
     Block(Data _data, Block *_previous);
+    Block(Data _data, Block *_previous, const sha_256_t &_hash,
+          const uint8_t &_nonce);
     [[nodiscard]] const Data &getData() const;
     [[nodiscard]] Data &getData();
 
   private:
-    string hash();
+    sha_256_t hash();
+
+    Block *previous;
+    gsl::owner<Block *> next = nullptr;
 
     Data data;
-    string previous_hash;
-
-    gsl::owner<Block *> next = nullptr;
-    Block *previous;
+    Header header;
   };
 
   // Block *m_head = nullptr;

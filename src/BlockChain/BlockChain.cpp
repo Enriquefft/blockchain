@@ -1,14 +1,30 @@
 #include "BlockChain/BlockChain.hpp"
 #include <chrono>
+#include <limits>
 #include <openssl/ts.h>
 #include <random>
+#include <sstream>
 
 // using blockchain::Block;
 using blockchain::BlockChain;
+using blockchain::sha_256_t;
 
 using std::string;
 
 // O(1)
+void BlockChain::addBlock(const Data &data, const sha_256_t &hash,
+                          const uint8_t &nonce) {
+
+  if (m_head == nullptr) {
+    m_head = new Block(data, nullptr, hash, nonce);
+    m_tail = m_head;
+    return;
+  }
+  m_tail->next = new Block(data, m_tail, hash, nonce);
+  m_tail = m_tail->next;
+}
+BlockChain::BlockChain() noexcept
+    : m_head(new(std::nothrow) Block()), m_tail(m_head) {}
 void BlockChain::addBlock(const Data &data) {
 
   if (m_head == nullptr) {
@@ -19,11 +35,46 @@ void BlockChain::addBlock(const Data &data) {
   m_tail->next = new Block(data, m_tail);
   m_tail = m_tail->next;
 }
+BlockChain::Block::Block()
+    : previous(nullptr),
+      data("genesis", "genesis", 0), header{sha_256_t{}, sha_256_t{}, 0} {}
+// , nullptr, sha_256_t{}, 0};
+
+BlockChain::Block::Block(Data _data, Block *_previous, const sha_256_t &_hash,
+                         const uint8_t &_nonce)
+    : previous(_previous), data(std::move(_data)),
+      header(_previous->hash(), _hash, _nonce) {}
 
 BlockChain::Block::Block(Data _data, Block *_previous)
-    : data(std::move(_data)),
-      previous_hash(_previous != nullptr ? _previous->hash() : ""),
-      previous(_previous) {}
+    : previous(_previous), data(std::move(_data)), header(_previous->hash()) {
+
+  bool found_hash = false;
+
+  while (!found_hash) {
+
+    for (header.nounce = 0; header.nounce < std::numeric_limits<uint8_t>::max();
+         ++header.nounce) {
+
+      if (found_hash) {
+        break;
+      }
+
+      sha_256_t hash = this->hash();
+
+      // Check if hash fullfills TARGET
+      for (uint8_t digit = 0; digit < BlockChain::TARGET; digit++) {
+        if (hash[digit] != 0) {
+          break;
+        }
+      }
+      header.current_hash = hash;
+      found_hash = true;
+    }
+
+    // Update timestamp and try again
+    data.timestamp = std::chrono::utc_clock::now();
+  }
+}
 
 BlockChain::reference BlockChain::getLastBlock() { return m_tail->data; }
 BlockChain::const_reference BlockChain::getLastBlock() const {
@@ -38,10 +89,9 @@ bool BlockChain::isConsistent() const {
   }
 
   auto *curr = m_head->next;
-
   auto c = 1;
   for (; curr != nullptr; curr = curr->next) {
-    if (curr->previous->hash() != curr->previous_hash) {
+    if (curr->previous->hash() != curr->header.previous_hash) {
       std::cout << "block " << c << " is not consistent\n";
       return false;
     }
@@ -82,26 +132,36 @@ BlockChain::size_type BlockChain::size() const {
   return size;
 }
 
-static string Sha256(std::string_view str) {
+static std::string Sha2String(const sha_256_t &sha) {
+
+  std::stringstream stream;
+
+  stream << std::hex << std::setfill('0');
+
+  for (size_t i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+    stream << std::hex << std::setw(2) << static_cast<int>(sha[i]);
+  }
+  return stream.str();
+}
+
+static sha_256_t Sha256(std::string_view str) {
 
   // Transorm to bytes (unsigned char)
   std::span<const unsigned char> data(
       std::bit_cast<const unsigned char *>(str.data()), str.size());
 
-  auto *hash = SHA256(data.data(), data.size(), nullptr);
-
-  std::string result = std::format("{:02x}", hash[0]);
-  for (int i = 1; i < SHA256_DIGEST_LENGTH; i++) {
-    result += std::format(":{:02x}", hash[i]);
-  }
+  std::array<uint8_t, SHA256_DIGEST_LENGTH> result{};
+  SHA256(data.data(), data.size(), result.data());
 
   return result;
 }
 
-string BlockChain::Block::hash() {
-  return Sha256(previous_hash + std::to_string(static_cast<int>(data.amount)) +
-                std::format("{:%Y%m%d%H%M}", data.timestamp) + data.sender +
-                data.receiver);
+sha_256_t BlockChain::Block::hash() {
+  return Sha256(Sha2String(header.previous_hash) +              // Previous hash
+                std::to_string(static_cast<int>(data.amount)) + // Amount
+                std::format("{:%Y%m%d%H%M}", data.timestamp) +  // Time
+                data.sender +                                   // Sender
+                data.receiver);                                 // Receiver
 }
 
 ////// ITERATOR /////////
