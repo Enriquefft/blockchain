@@ -1,152 +1,141 @@
 #ifndef DEQUE_HPP
 #define DEQUE_HPP
 
-#include <cstddef>
 #include "Iterator.hpp"
-#define BLOCK_SIZE XXXX
+#include<iostream>
 
-
-template <typename T,size_t buffsize = 4> class Deque {
+template<typename T>
+class Deque{
 public:
-    typedef deque_iterator<T,buffsize> iterator;
     using value_type = T;
     using size_type = std::size_t;
-    using reference = T &;
-    using const_reference = const T &;
-    using pointer = T *;
-    using const_pointer = const T *;
+    using difference_type = std::ptrdiff_t;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = value_type*;
+    using const_pointer = const pointer;
+    using iterator = DequeIterator<T>;
     using map_pointer = pointer*;
 
-
-    Deque() noexcept = default;
-    explicit Deque(size_type count){
-        map_size = count / buffsize;
-
-        map = new T*[map_size];
+    Deque(){
+        map_size = 24 / CHUNK_SIZE;
+        map = new pointer[map_size];
+        map_pointer tmp_start = map + (map_size / 2);
+        map_pointer tmp_finish = map + (map_size / 2);
+        
         for(int i=0;i<map_size;i++){
-            map[i] = new T[buffsize];
+            map[i] = new value_type[CHUNK_SIZE];
         }
-        map[int(map_size/2)] = new T[buffsize];
-        map_pointer tmp_start = map + int(map_size / 2);
-        map_pointer tmp_finish = map + int(map_size / 2);
-
-        start.set_node(tmp_start);
+        start.setNode(tmp_start);
         start.current = start.first;
-
-        finish.set_node(tmp_finish);
-        finish.current = finish.first + 1;
+        finish.setNode(tmp_finish);
+        finish.current = start.first + 1;
     }
-
-
-    reference at(size_type pos){
-        return start[pos + 1];
+    explicit Deque(size_type numElements){
+        map_size = numElements / CHUNK_SIZE;
+        map = new pointer[map_size];
+        map_pointer tmp_start = map + (map_size / 2);
+        map_pointer tmp_finish = map + (map_size / 2);
+        
+        for(int i=0;i<map_size;i++){
+            map[i] = new value_type[CHUNK_SIZE];
+        }
+        start.setNode(tmp_start);
+        start.current = start.first;
+        finish.setNode(tmp_finish);
+        finish.current = start.first + 1;
     }
-    const_reference at(size_type pos) const{
-        return start[pos + 1];
+    iterator begin(){return start;}
+    iterator end(){
+        iterator tmp = finish;
+        return ++tmp;
     }
-    reference operator[](size_type pos){
-        return start[pos + 1];
+    reference front(){return *start;}
+    const_reference constFront()const{return *start;}
+    reference back(){return *finish;}
+    const_reference constBack()const{return *finish;}
+    void pushFront(value_type data){
+        if(start.current == *start.node && start.node == map){
+            resize();
+        }
+        --start;
+        *start = data;
     }
-    const_reference operator[](size_type pos) const{
-        return start[pos + 1];
+    void pushBack(value_type data){
+        ++finish;
+        if(finish.current == finish.last && finish.node == map + map_size - 1){
+            resize();
+        }
+        *finish = data;
     }
-    reference front(){
-        iterator temp = start;
-        ++temp;
-        return *temp;
-    }
-    const_reference front() const{
-        iterator temp = start;
-        ++temp;
-        return *temp;
-    }
-    reference back(){
-        iterator temp = finish;
-        --temp;
-        return *temp;
-    }
-    const_reference back() const{
-        iterator temp = finish;
-        --temp;
-        return *temp;
-    }
-
-    // Iterators
-    iterator begin() noexcept{
+    void popBack(){if(!empty()){--finish;}}
+    void popFront(){if(!empty()){++start;}}
+    reference operator[](size_type n){return start[n];}
+    const_reference operator[](size_type pos)const{return start[pos + 1];}
+    reference at(size_type pos){return start[pos + 1];}
+    const_reference at(size_type pos)const {return start[pos + 1];}
+    void insert(int index,reference value){start[index] = value;}
+    [[nodiscard]]bool empty()const{
         iterator tmp = start;
-        ++tmp;
-        return tmp;
+        return *(++tmp) = *finish;
     }
-    // const_iterator begin() const noexcept;
-    iterator end() noexcept{
-        return finish;
-    }
-    // const_iterator end() const noexcept;
-
-    // Capacity
-    [[nodiscard]] bool empty() const noexcept{
-        iterator temp = start;
-        return *(++temp) == *(finish);
-    }
-    [[nodiscard]] size_type size() const noexcept{
-        int size = 0;
-        for(auto iter = begin();iter != end();++iter){
+    [[nodiscard]]size_type size()const{
+        size_type size = 0;
+        for(Deque<T>::iterator iter = begin();iter != end();++iter){
             size++;
         }
         return size;
     }
-    [[nodiscard]] size_type max_size() const noexcept{
-        return map_size * buffsize;
-    }
-
-
-    // Modifiers
-    void clear() noexcept{
-        map_pointer tmp_start = map + int(map_size / 2);
-        map_pointer tmp_finish = map + int(map_size / 2);
-
-        start.set_node(tmp_start);
-        start.current = start.first;
-
-        finish.set_node(tmp_finish);
-        finish.current = finish.first + 1;
-    }
-    void insert(int index,reference value){
-        start[index] = value;
-    }
-    void push_back(const_reference element){//falta resize
-        *finish.current = element;
-        ++finish;
-    }
-    void push_front(const_reference element){//falta resize
-        *start.current = element;
-        --start;
-    }
-    void pop_back(){
-        if(!empty()){
-            --finish;
+    void erase(Deque<T>::iterator iter){
+        if(iter >= begin() && iter >= end()){
+            throw std::out_of_range("Index out of range");
         }
         else{
-            cout<<"Empty!\n";
+            if(iter != finish){
+                iterator next = iter;
+                ++next;
+                while(next != finish){
+                    *iter = *next;
+                    iter = next;
+                    ++next;
+                }
+            }
+            popBack();
         }
     }
-    void pop_front(){
-        if(!empty()){
-            ++start;
-        }
-        else{
-            cout<<"Empty\n";
-        }
-    }
-
-
 private:
-    // Que atributos usar
     map_pointer map;
     size_type map_size;
-    // Tamaño del mapa
     iterator start;
     iterator finish;
+    const int CHUNK_SIZE = 8;
+    const int RESIZE_FACTOR = 4;
+    void resize(){
+        difference_type start_node_offset = start.node - map;
+        difference_type finish_node_offset = finish.node - map;
+        difference_type start_offset = start.current - start.first;
+        difference_type finish_offset = finish.current - finish.first;
+
+        map_pointer new_map = new pointer[map_size + RESIZE_FACTOR];
+
+        new_map[0] = new T[CHUNK_SIZE];
+        new_map[1] = new T[CHUNK_SIZE];
+        for(int i=2,j=0;i<map_size+1;i++,j++){
+            new_map[i] = map[j];
+        }
+
+        new_map[map_size + 1] = new T[CHUNK_SIZE];
+        new_map[map_size + 2] = new T[CHUNK_SIZE];
+        delete[]map;
+        map = new_map;
+        map_size+=4;
+
+        start.setNode(map + start_node_offset + 2);
+        start.current = start.first + start_offset;
+        finish.setNode(map + finish_node_offset + 2);
+        finish.current = finish.first + finish_offset;
+    }
 };
+
 
 #endif // !DEQUE_HPP
