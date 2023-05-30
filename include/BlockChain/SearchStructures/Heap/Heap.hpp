@@ -21,7 +21,7 @@ private:
   int m_capacit0 = 3;
 
 public:
-  Heap(const blockchain::BlockChain &blockchain) {
+  explicit Heap(const blockchain::BlockChain &blockchain) {
     for (const auto &block : blockchain) {
       this->push(block);
     }
@@ -50,30 +50,30 @@ public:
   }
 
   Data pop() {
-    if (n == 0)
-      throw out_of_range("El heap esta vacio");
+    if (is_empty())
+      throw std::out_of_range("El heap esta vacio");
 
-    Data root = elements[0];
-    elements[0] = elements[n - 1];
-    n--;
+    Data root = m_elements[0];
+    m_elements[0] = m_elements[m_size - 1];
+    m_size--;
     heapify_down(0);
 
     return root;
   }
 
   Data top() {
-    if (n == 0)
-      throw out_of_range("El heap esta vacio");
+    if (m_size == 0)
+      throw std::out_of_range("El heap esta vacio");
 
-    return elements[0];
+    return m_elements[0];
   }
 
-  Vector<Data> extractTheTopK(int k) {
-    if (k > n)
-      throw out_of_range("k es mayor que n");
+  Vector<Data> extractTop(int TopElems) {
+    if (TopElems > m_size)
+      throw std::out_of_range("k es mayor que n");
 
     Vector<Data> result;
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i < TopElems; i++) {
       result.push_back(pop());
     }
 
