@@ -1,7 +1,7 @@
 #include <stack>
 #include <iostream>
 #include <queue>
-#include "node.hpp"
+#include "NodeBT.h"
 using namespace std;
 template<typename T>
 class BSTIterator {
