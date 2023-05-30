@@ -4,12 +4,46 @@
 #include <openssl/ts.h>
 #include <random>
 #include <sstream>
+#include <string>
 
 // using blockchain::Block;
 using blockchain::BlockChain;
 using blockchain::sha_256_t;
 
 using std::string;
+
+static std::string Sha2String(const sha_256_t &sha) {
+
+  std::stringstream stream;
+
+  stream << std::hex << std::setfill('0');
+
+  for (size_t i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+    stream << std::hex << std::setw(2) << static_cast<int>(sha[i]);
+  }
+  return stream.str();
+}
+
+static sha_256_t Sha256(std::string_view str) {
+
+  // Transorm to bytes (unsigned char)
+  std::span<const unsigned char> data(
+      std::bit_cast<const unsigned char *>(str.data()), str.size());
+
+  std::array<uint8_t, SHA256_DIGEST_LENGTH> result{};
+  SHA256(data.data(), data.size(), result.data());
+
+  return result;
+}
+
+sha_256_t BlockChain::Block::hash() {
+  return Sha256(Sha2String(header.previous_hash) + // Previous hash
+                std::to_string(header.nounce) +
+                std::to_string(static_cast<int>(data.amount)) + // Amount
+                std::format("{:%Y%m%d%H%M}", data.timestamp) +  // Time
+                data.sender +                                   // Sender
+                data.receiver);                                 // Receiver
+}
 
 // O(1)
 void BlockChain::addBlock(const Data &data, const sha_256_t &hash,
@@ -55,20 +89,24 @@ BlockChain::Block::Block(Data _data, Block *_previous)
     for (header.nounce = 0; header.nounce < std::numeric_limits<uint8_t>::max();
          ++header.nounce) {
 
-      if (found_hash) {
-        break;
-      }
-
       sha_256_t hash = this->hash();
 
       // Check if hash fullfills TARGET
+
+      std::cout << Sha2String(hash) << std::endl;
+
       for (uint8_t digit = 0; digit < BlockChain::TARGET; digit++) {
         if (hash[digit] != 0) {
+          found_hash = false;
           break;
         }
+        found_hash = true;
       }
-      header.current_hash = hash;
-      found_hash = true;
+
+      if (found_hash) {
+        header.current_hash = hash;
+        break;
+      }
     }
 
     // Update timestamp and try again
@@ -130,38 +168,6 @@ BlockChain::size_type BlockChain::size() const {
   }
 
   return size;
-}
-
-static std::string Sha2String(const sha_256_t &sha) {
-
-  std::stringstream stream;
-
-  stream << std::hex << std::setfill('0');
-
-  for (size_t i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
-    stream << std::hex << std::setw(2) << static_cast<int>(sha[i]);
-  }
-  return stream.str();
-}
-
-static sha_256_t Sha256(std::string_view str) {
-
-  // Transorm to bytes (unsigned char)
-  std::span<const unsigned char> data(
-      std::bit_cast<const unsigned char *>(str.data()), str.size());
-
-  std::array<uint8_t, SHA256_DIGEST_LENGTH> result{};
-  SHA256(data.data(), data.size(), result.data());
-
-  return result;
-}
-
-sha_256_t BlockChain::Block::hash() {
-  return Sha256(Sha2String(header.previous_hash) +              // Previous hash
-                std::to_string(static_cast<int>(data.amount)) + // Amount
-                std::format("{:%Y%m%d%H%M}", data.timestamp) +  // Time
-                data.sender +                                   // Sender
-                data.receiver);                                 // Receiver
 }
 
 ////// ITERATOR /////////
