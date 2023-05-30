@@ -1,79 +1,78 @@
-#include<iostream>
+#include <cstddef>
 
-
-template<typename T,std::size_t buff_size>
-struct deque_iterator{
-    typedef deque_iterator<T,buff_size> iterator;
-    typedef T**                         map_pointer;
-    typedef T&                          reference;
-    typedef T*                          pointer;
-
+template<typename T>
+struct DequeIterator
+{
+public:
+    using iterator = DequeIterator<T>;
+    using value_type = T;
+    using map_pointer = value_type**;
+    using pointer = value_type*;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using size_type = std::size_t;
+    using difference_type = ptrdiff_t;
+    
     pointer current;
     pointer first;
     pointer last;
     map_pointer node;
+    
+    const int CHUNK_SIZE = 8;
 
-    void set_node(map_pointer new_node){
-        node = new_node;
-        first = *new_node;
-        last = first + int(buff_size - 1);
+    int chunkSize(){return CHUNK_SIZE;}
+    void setNode(map_pointer newNode){
+        node = newNode;
+        first = *newNode;
+        last = last + chunkSize();
     }
-    reference operator*(){
-        return *current;
-    }
+    reference operator*(){return *current;}
     iterator& operator++(){
+        ++current;
         if(current == last){
-            set_node(node + 1);
+            setNode(node + 1);
             current = first;
-        }
-        else{
-            ++current;
         }
         return *this;
     }
     iterator& operator--(){
+        --current;
         if(current == first){
-            set_node(node - 1);
+            setNode(node - 1);
             current = last;
-        }
-        else{
-            --current;
         }
         return *this;
     }
-    bool operator !=(const iterator& other){
-        return this->current != other.current;
-    }
-    iterator& operator +=(ptrdiff_t n){
-        ptrdiff_t offset = n + (current - first);
-        if(offset >= 0 && offset < ptrdiff_t(buff_size)){
+    iterator& operator+=(difference_type n){
+        difference_type offset = n + (current - first);
+        if(offset >= 0 && offset < CHUNK_SIZE){
             current += n;
         }
         else{
-            ptrdiff_t node_offset;
-            if(offset > 0){node_offset = offset / ptrdiff_t(buff_size);}
-            else{
-                node_offset = -((offset - 1) / ptrdiff_t(buff_size)) - 1;
+            difference_type node_offset = 0;
+            if(offset > 0){
+                node_offset = offset / CHUNK_SIZE;
+                offset %= CHUNK_SIZE;
             }
-            set_node(node + node_offset);
-            current = first + (offset - node_offset * buff_size);
+            else{
+                node_offset = -((offset - 1) / difference_type(chunkSize)) - 1;
+                offset  = offset % CHUNK_SIZE + CHUNK_SIZE; 
+            }
+            setNode(node + node_offset);
+            current = first + offset;
         }
         return *this;
     }
-    iterator operator+(ptrdiff_t n)const{
-        iterator temp = *this;
-        return temp += n;
-    }
-    iterator& operator -=(ptrdiff_t n)const{
-        iterator temp =*this;
-        return temp -= n;
-    }
-    iterator operator-(ptrdiff_t n)const{
-        iterator temp = *this;
-        return temp -= n;
-    }
-    reference operator[](ptrdiff_t n)const{
-        return *(*this + n);
+    reference operator[](difference_type n){return *(*this + n);}
+    bool operator !=(iterator other)const{
+        return this->current != other.current;
+    }   
+    bool operator <=(const iterator& other)const{
+        if(node == other.node){
+            return current <=other.current;
+        }
+        else{
+            return node <= other.node;
+        }
     }
 };
-
