@@ -18,7 +18,7 @@ using sha_256_t = std::array<uint8_t, 32 /* SHA256_DIGEST_LENGTH*/>;
 
 class BlockChain {
 
-  inline static const uint8_t TARGET = 3;
+  inline static const uint8_t TARGET = 2;
 
 public:
   // Typedefs

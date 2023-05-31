@@ -89,21 +89,26 @@ BlockChain::Block::Block(Data _data, Block *_previous)
     for (header.nounce = 0; header.nounce < std::numeric_limits<uint8_t>::max();
          ++header.nounce) {
 
-      sha_256_t hash = this->hash();
-
       // Check if hash fullfills TARGET
 
-      std::cout << Sha2String(hash) << std::endl;
+      sha_256_t hash = this->hash();
+
+      string hex_hash = Sha2String(hash);
+      std::cout << hex_hash;
 
       for (uint8_t digit = 0; digit < BlockChain::TARGET; digit++) {
-        if (hash[digit] != 0) {
+
+        // Endiannes can be a bitch
+        if (hex_hash[digit] != '0') {
           found_hash = false;
           break;
         }
         found_hash = true;
       }
+      std::cout << "\n";
 
       if (found_hash) {
+        std::cout << "found hash\n";
         header.current_hash = hash;
         break;
       }
