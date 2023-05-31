@@ -20,6 +20,8 @@ private:
   int m_size = 0;
   int m_capacit0 = 3;
 
+  Data::Compare<type> comparator;
+
 public:
   explicit Heap(const blockchain::BlockChain &blockchain) {
     for (const auto &block : blockchain) {

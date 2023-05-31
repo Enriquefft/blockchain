@@ -1,12 +1,15 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 
+#include <array>
 #include <initializer_list>
 #include <type_traits>
 
 namespace Utils {
 
-template <typename T> class Array {
+template <typename T, std::size_t N> using Array = std::array<T, N>;
+
+template <typename T> class Array_ {
 public:
   template <bool IS_CONST> class _iterator;
 
@@ -22,18 +25,18 @@ public:
   using const_iterator = _iterator<true>;
 
   // Constructors
-  constexpr Array();
-  constexpr explicit Array(const size_type &size);
-  constexpr Array(const size_type &size, const T &value);
-  constexpr Array(const std::initializer_list<T> &list);
+  constexpr Array_();
+  constexpr explicit Array_(const size_type &size);
+  constexpr Array_(const size_type &size, const T &value);
+  constexpr Array_(const std::initializer_list<T> &list);
 
-  constexpr Array(const Array &other);
-  constexpr Array(Array &&other) noexcept;
-  constexpr Array &operator=(const Array &other);
-  constexpr Array &operator=(Array &&other) noexcept;
+  constexpr Array_(const Array_ &other);
+  constexpr Array_(Array_ &&other) noexcept;
+  constexpr Array_ &operator=(const Array_ &other);
+  constexpr Array_ &operator=(Array_ &&other) noexcept;
 
   // Destructor
-  ~Array();
+  ~Array_();
 
   // Element access
   constexpr reference at(const size_type &pos);
@@ -59,7 +62,7 @@ public:
   // Capacity
   [[nodiscard]] constexpr bool empty() const noexcept;
   [[nodiscard]] constexpr size_type size() const noexcept;
-  [[nodiscard]] constexpr size_type max_size() const noexcept;
+  [[nodiscard]] constexpr size_type maxSize() const noexcept;
 
   // Random access iterator
   template <bool IS_CONST> class _iterator {
@@ -76,8 +79,8 @@ private:
 };
 
 // Declaración explicita
-extern template class Array<int>;
-extern template class Array<float>;
+extern template class Array_<int>;
+extern template class Array_<float>;
 
 } // namespace Utils
 
