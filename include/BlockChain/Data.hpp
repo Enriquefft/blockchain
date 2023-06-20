@@ -32,10 +32,12 @@ struct Data {
     RECEIVER_NAME_DESCENDING
   };
 
-  template <CompareType T> class Compare {
-
+  template <CompareType T> struct Compare {
     bool operator()(const Data &data1, const Data &data2) const
-      requires(T == CompareType::MONEY_ASCENDING);
+		requires(T == CompareType::MONEY_ASCENDING){
+			return data1.amount > data2.amount;
+		}
+	/*
     bool operator()(const Data &data1, const Data &data2) const
       requires(T == CompareType::MONEY_DESCENDING);
     bool operator()(const Data &data1, const Data &data2) const
@@ -50,7 +52,9 @@ struct Data {
       requires(T == CompareType::RECEIVER_NAME_ASCENDING);
     bool operator()(const Data &data1, const Data &data2) const
       requires(T == CompareType::RECEIVER_NAME_DESCENDING);
+	  */
   };
+
 };
 
 #endif // DATA_HPP
