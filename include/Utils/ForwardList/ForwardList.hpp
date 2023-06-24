@@ -2,10 +2,7 @@
 #define FORWARD_LIST_HPP
 
 #include "Utils/gsl.hpp"
-#include <cstddef>
 #include <iterator>
-#include <type_traits>
-#include <utility>
 
 namespace Utils {
 
@@ -139,6 +136,7 @@ private:
 
     explicit fl_iterator(Node *node = nullptr);
 
+    // Implicit conversion between const_iterator and iterator
     template <bool otherConst> operator fl_iterator<otherConst>() {
       return fl_iterator<otherConst>(current);
     }
