@@ -12,7 +12,7 @@ is_sourced(){
  # Sample call.
 is_sourced && sourced=1 || sourced=0
 
-CXX=g++ cmake -S . -B build
+CXX=clang++ cmake -S . -B build
 cmake --build build
 
 
@@ -22,6 +22,3 @@ if [ $sourced = 1 ]; then
 else
   echo "Run with source to get the ASAN_OPTIONS environment variable"
 fi
-
-
-

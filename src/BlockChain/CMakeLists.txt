@@ -2,12 +2,16 @@ cmake_minimum_required(VERSION 3.25)
 
 add_library(BlockChain ${CMAKE_CURRENT_SOURCE_DIR}/BlockChain.cpp)
 
-target_sources(BlockChain PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Data.cpp)
+target_sources(
+  BlockChain PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Data.cpp
+                     ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/Heap/Heap.cpp)
 
 # Include include/BlockChainFloder
 get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 
-target_include_directories(BlockChain PUBLIC ${INCLUDE_FOLDER}/BlockChain)
+target_include_directories(
+  BlockChain PUBLIC ${INCLUDE_FOLDER}/BlockChain
+                    ${INCLUDE_FOLDER}/BlockChain/IndexStructures)
 target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER})
 
 target_compile_options(
@@ -22,6 +26,8 @@ target_compile_options(
           -Werror>
           # Disable some warnings
           $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-c++98-compat>
+          $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-c++98-compat-pedantic>
+          $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-zero-as-null-pointer-constant>
           $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-error=padded>
           $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fsanitize=address,undefined>
           $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fsanitize-address-use-after-scope>

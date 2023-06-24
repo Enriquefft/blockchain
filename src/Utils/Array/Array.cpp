@@ -1,5 +1,5 @@
-#include "Array.hpp"
+#include "Utils/Array/Array.hpp"
 
 // Instanciación explicita
-template class Array<int>;
-template class Array<float>;
+// template class Array<int>;
+// template class Array<float>;

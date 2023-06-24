@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 
+constexpr bool POW = false;
+
 // using blockchain::Block;
 using blockchain::BlockChain;
 using blockchain::sha_256_t;
@@ -57,8 +59,10 @@ void BlockChain::addBlock(const Data &data, const sha_256_t &hash,
   m_tail->next = new Block(data, m_tail, hash, nonce);
   m_tail = m_tail->next;
 }
+
 BlockChain::BlockChain() noexcept
     : m_head(new(std::nothrow) Block()), m_tail(m_head) {}
+
 void BlockChain::addBlock(const Data &data) {
 
   if (m_head == nullptr) {
@@ -69,6 +73,7 @@ void BlockChain::addBlock(const Data &data) {
   m_tail->next = new Block(data, m_tail);
   m_tail = m_tail->next;
 }
+
 BlockChain::Block::Block()
     : previous(nullptr),
       data("genesis", "genesis", 0), header{sha_256_t{}, sha_256_t{}, 0} {}
@@ -83,40 +88,42 @@ BlockChain::Block::Block(Data _data, Block *_previous)
     : previous(_previous), data(std::move(_data)), header(_previous->hash()) {
 
   bool found_hash = false;
+  sha_256_t hash;
 
-  while (!found_hash) {
+  do {
 
     for (header.nounce = 0; header.nounce < std::numeric_limits<uint8_t>::max();
          ++header.nounce) {
 
       // Check if hash fullfills TARGET
-
-      sha_256_t hash = this->hash();
-
+      hash = this->hash();
       string hex_hash = Sha2String(hash);
-      std::cout << hex_hash;
 
+      found_hash = true;
       for (uint8_t digit = 0; digit < BlockChain::TARGET; digit++) {
+
+        if (!POW) {
+          break;
+        }
 
         // Endiannes can be a bitch
         if (hex_hash[digit] != '0') {
           found_hash = false;
           break;
         }
-        found_hash = true;
       }
-      std::cout << "\n";
 
-      if (found_hash) {
-        std::cout << "found hash\n";
+      if (found_hash || !POW) {
         header.current_hash = hash;
         break;
       }
     }
 
     // Update timestamp and try again
-    data.timestamp = std::chrono::utc_clock::now();
-  }
+    if (!found_hash) {
+      data.timestamp = std::chrono::utc_clock::now();
+    }
+  } while (!found_hash);
 }
 
 BlockChain::reference BlockChain::getLastBlock() { return m_tail->data; }

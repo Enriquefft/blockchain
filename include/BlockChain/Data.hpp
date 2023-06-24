@@ -32,12 +32,11 @@ struct Data {
     RECEIVER_NAME_DESCENDING
   };
 
-  template <CompareType T> struct Compare {
+  template <CompareType T> class Compare {
+
+  public:
     bool operator()(const Data &data1, const Data &data2) const
-		requires(T == CompareType::MONEY_ASCENDING){
-			return data1.amount > data2.amount;
-		}
-	/*
+      requires(T == CompareType::MONEY_ASCENDING);
     bool operator()(const Data &data1, const Data &data2) const
       requires(T == CompareType::MONEY_DESCENDING);
     bool operator()(const Data &data1, const Data &data2) const
@@ -52,9 +51,18 @@ struct Data {
       requires(T == CompareType::RECEIVER_NAME_ASCENDING);
     bool operator()(const Data &data1, const Data &data2) const
       requires(T == CompareType::RECEIVER_NAME_DESCENDING);
-	  */
   };
-
 };
+
+// Extern explicit instantiation
+extern template class Data::Compare<Data::CompareType::MONEY_ASCENDING>;
+extern template class Data::Compare<Data::CompareType::MONEY_DESCENDING>;
+extern template class Data::Compare<Data::CompareType::TIME_ASCENDING>;
+extern template class Data::Compare<Data::CompareType::TIME_DESCENDING>;
+extern template class Data::Compare<Data::CompareType::SENDER_NAME_ASCENDING>;
+extern template class Data::Compare<Data::CompareType::SENDER_NAME_DESCENDING>;
+extern template class Data::Compare<Data::CompareType::RECEIVER_NAME_ASCENDING>;
+extern template class Data::Compare<
+    Data::CompareType::RECEIVER_NAME_DESCENDING>;
 
 #endif // DATA_HPP
