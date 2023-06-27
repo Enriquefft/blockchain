@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.25)
 add_library(BlockChain ${CMAKE_CURRENT_SOURCE_DIR}/BlockChain.cpp)
 
 target_sources(
-  BlockChain PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Data.cpp
-                     ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/Heap/Heap.cpp)
+  BlockChain PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Data.cpp
+                    ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/Heap/Heap.cpp)
 
 # Include include/BlockChainFloder
 get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
