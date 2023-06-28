@@ -2,10 +2,12 @@
 #define VECTOR_HPP
 
 #include "Utils/gsl.hpp"
-#include <Utils/Array/Array.hpp>
 #include <cstddef>
 #include <initializer_list>
 #include <stdexcept>
+
+// #include <Utils/Array/Array.hpp>
+#include <array>
 
 namespace Utils {
 
@@ -93,13 +95,14 @@ public:
   constexpr void resize(size_type count, const value_type &value);
 
 private:
-  gsl::owner<pointer> m_data = nullptr;
-  size_type m_capacity = 0;
   size_type m_size = 0;
+  size_type m_capacity = 0;
+  gsl::owner<pointer> m_data = nullptr;
 
-  [[nodiscard]] static size_type nextCapacity(const size_type &newCap) noexcept;
+  [[nodiscard]] constexpr static size_type
+  nextCapacity(const size_type &newCap) noexcept;
 
-  inline static constexpr Array<size_type, 24> POWERS = {
+  inline static constexpr std::array<size_type, 24> POWERS = {
       1,     2,      4,      8,      16,      32,      64,      128,
       256,   512,    1024,   2048,   4096,    8192,    16384,   32768,
       65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608};

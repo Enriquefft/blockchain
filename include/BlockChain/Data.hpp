@@ -54,6 +54,35 @@ struct Data {
   };
 };
 
+using CompareType = Data::CompareType;
+
+template <CompareType T> struct GetType;
+
+template <CompareType T>
+  requires(T == CompareType::MONEY_ASCENDING ||
+           T == CompareType::MONEY_DESCENDING)
+struct GetType<T> {
+  using type = Credit;
+};
+
+template <CompareType T>
+  requires(T == CompareType::TIME_ASCENDING ||
+           T == CompareType::TIME_DESCENDING)
+struct GetType<T> {
+  using type = Data::TIME;
+};
+
+template <CompareType T>
+  requires(T == CompareType::SENDER_NAME_ASCENDING ||
+           T == CompareType::SENDER_NAME_DESCENDING ||
+           T == CompareType::RECEIVER_NAME_ASCENDING ||
+           T == CompareType::RECEIVER_NAME_DESCENDING)
+struct GetType<T> {
+  using type = std::string;
+};
+
+template <CompareType T> using getType = typename GetType<T>::type;
+
 // Extern explicit instantiation
 extern template class Data::Compare<Data::CompareType::MONEY_ASCENDING>;
 extern template class Data::Compare<Data::CompareType::MONEY_DESCENDING>;

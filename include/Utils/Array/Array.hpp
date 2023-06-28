@@ -106,7 +106,7 @@ public:
 // Element access
 template <typename T, std::size_t N>
 constexpr auto Array<T, N>::at(const size_type &pos) -> reference {
-  if constexpr (pos >= N) {
+  if (pos >= N) {
     throw std::out_of_range("Array index out of range");
   }
 
@@ -116,7 +116,7 @@ constexpr auto Array<T, N>::at(const size_type &pos) -> reference {
 template <typename T, std::size_t N>
 [[nodiscard]] constexpr auto Array<T, N>::at(const size_type &pos) const
     -> const_reference {
-  if constexpr (pos >= N) {
+  if (pos >= N) {
     throw std::out_of_range("Array index out of range");
   }
 
