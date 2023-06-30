@@ -43,11 +43,11 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                username:
                   type: string
-                  description: The name of the new user.
+                  description: The username of the new user.
                   example: John Doe
-  /users/{name}:
+  /users/{username}:
     get:
       tags:
       - Users
@@ -55,9 +55,9 @@ paths:
       description: Retrieves the requested user's data.
       operationId: get-user
       parameters:
-      - name: name
+      - username: username
         in: path
-        description: The name of the user to retrieve.
+        description: The username of the user to retrieve.
         required: true
         style: simple
         explode: false
@@ -90,9 +90,9 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                username:
                   type: string
-                  description: The name of the user to login.
+                  description: The username of the user to login.
                   example: John Doe
                 password:
                   type: string
@@ -118,14 +118,39 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                username:
                   type: string
-                  description: The name of the user to login.
+                  description: The username of the user to login.
                   example: John Doe
                 password:
                   type: string
                   description: The password of the user to login.
                   example: password
+  # /blockchain:
+  #   get:
+  #     tags:
+  #     - Blockchain
+  #     summary: Blockchain info
+  #     description: Retrieves information about the blockchain.
+  #     operationId: get-blockchain-info
+  # /blockchain/transactions:
+  #   get:
+  #     tags:
+  #     - Blockchain
+  #     summary: Get the blockchain
+  #     description: Retrieves the blockchain.
+  #     operationId: get-blockchain
+  # /blockchain/transactions/new:
+  #   post:
+  #     tags:
+  #     - Blockchain
+  #     summary: Add transaction
+  #     description: Adds a new transaction to the blockchain.
+  # /blockchain/transactions/search:
+  # /blockchain/transactions/contains:
+  # /blockchain/transactions/range_search:
+  # /blockchain/transactions/max:
+  # /blockchain/transactions/min:
 
 components:
   schemas:
@@ -135,7 +160,7 @@ components:
         id:
           type: integer
           example: 1
-        name:
+        username:
           type: string
           example: John Doe
         balance:
