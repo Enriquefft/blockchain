@@ -1,7 +1,7 @@
 #ifndef RADIX_TRIE_HPP
 #define RADIX_TRIE_HPP
 
-#include "Utils/ForwardList/ForwardList.hpp"
+#include "ForwardList/ForwardList.hpp"
 #include <set>
 #include <string>
 #include <utility>

@@ -1,4 +1,4 @@
-#include "Utils/RadixTrie/RadixTrie.hpp"
+#include "RadixTrie/RadixTrie.hpp"
 #include <algorithm>
 #include <cstdio>
 #include <queue>

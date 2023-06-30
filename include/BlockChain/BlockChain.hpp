@@ -8,7 +8,7 @@
 #include <string>
 #include <utility>
 
-#include "Utils/gsl.hpp"
+#include "gsl.hpp"
 
 namespace blockchain {
 

@@ -1,9 +1,9 @@
 #ifndef IS_BST_HPP
 #define IS_BST_HPP
 
-#include "BlockChain/Data.hpp"
-#include "Utils/gsl.hpp"
-#include <Utils/Vector/Vector.hpp>
+#include "Data.hpp"
+#include "Vector/Vector.hpp"
+#include "gsl.hpp"
 
 namespace IndexStructure {
 

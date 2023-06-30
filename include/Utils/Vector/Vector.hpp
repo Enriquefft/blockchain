@@ -1,7 +1,7 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
-#include "Utils/gsl.hpp"
+#include "gsl.hpp"
 #include <bits/iterator_concepts.h>
 #include <cstddef>
 #include <initializer_list>

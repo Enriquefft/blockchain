@@ -1,7 +1,7 @@
 #ifndef FORWARD_LIST_HPP
 #define FORWARD_LIST_HPP
 
-#include "Utils/gsl.hpp"
+#include "gsl.hpp"
 #include <iterator>
 
 namespace Utils {

@@ -11,10 +11,7 @@ target_sources(
 # Include include/BlockChainFloder
 get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 
-target_include_directories(Utils PUBLIC ${INCLUDE_FOLDER})
 target_include_directories(Utils PRIVATE ${INCLUDE_FOLDER}/Utils)
-
-message(STATUS "Utils include folder: ${INCLUDE_FOLDER}/BlockChain/Utils")
 
 target_compile_options(
   Utils

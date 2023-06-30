@@ -1,9 +1,9 @@
-#include "Utils/ForwardList/ForwardList.hpp"
+#include "ForwardList/ForwardList.hpp"
 #include <cstdint>
 #include <utility>
 
 // Explicit Declaration only
-#include "Utils/RadixTrie/RadixTrie.hpp"
+#include "RadixTrie/RadixTrie.hpp"
 
 namespace Utils {
 
