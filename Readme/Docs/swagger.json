@@ -1,0 +1,214 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "UteCoin REST API",
+    "description" : "This API allows for managment of users, transactions and queries of the blockchain.\n",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "/"
+  } ],
+  "tags" : [ {
+    "name" : "Blockchain"
+  }, {
+    "name" : "Users"
+  } ],
+  "paths" : {
+    "/users" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Get all the users",
+        "description" : "Retrieves a list of all the user objects.",
+        "operationId" : "get-users",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/users"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Users" ],
+        "summary" : "Create a new user",
+        "description" : "Creates a new user and returns the user object.",
+        "operationId" : "put-user",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user"
+                }
+              }
+            }
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "username" : {
+                    "type" : "string",
+                    "description" : "The username of the new user.",
+                    "example" : "John Doe"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{username}" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Get a single user",
+        "description" : "Retrieves the requested user's data.",
+        "operationId" : "get-user",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "The username of the user to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login" : {
+      "post" : {
+        "tags" : [ "Users" ],
+        "summary" : "Login",
+        "description" : "Logs in a user and returns the user object.",
+        "operationId" : "post-login",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user"
+                }
+              }
+            }
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "username" : {
+                    "type" : "string",
+                    "description" : "The username of the user to login.",
+                    "example" : "John Doe"
+                  },
+                  "password" : {
+                    "type" : "string",
+                    "description" : "The password of the user to login.",
+                    "example" : "password"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register" : {
+      "post" : {
+        "tags" : [ "Users" ],
+        "summary" : "Register",
+        "description" : "Registers a new user and returns the user object.",
+        "operationId" : "post-register",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user"
+                }
+              }
+            }
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "username" : {
+                    "type" : "string",
+                    "description" : "The username of the user to login.",
+                    "example" : "John Doe"
+                  },
+                  "password" : {
+                    "type" : "string",
+                    "description" : "The password of the user to login.",
+                    "example" : "password"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "user" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "username" : {
+            "type" : "string",
+            "example" : "John Doe"
+          },
+          "balance" : {
+            "type" : "integer",
+            "example" : 5
+          }
+        }
+      },
+      "users" : {
+        "maxItems" : 100,
+        "minItems" : 0,
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/user"
+        }
+      }
+    }
+  }
+}
