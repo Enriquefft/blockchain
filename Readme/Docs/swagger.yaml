@@ -7,12 +7,13 @@ info:
 servers:
 - url: /
 tags:
-- name: blockchain
+- name: Blockchain
+- name: Users
 paths:
   /users:
     get:
       tags:
-      - Gameplay
+      - Users
       summary: Get all the users
       description: Retrieves a list of all the user objects.
       operationId: get-users
@@ -23,6 +24,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
+    put:
+      tags:
+      - Users
+      summary: Create a new user
+      description: Creates a new user and returns the user object.
+      operationId: put-user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the new user.
+                  example: John Doe
+  /users/{name}:
+    get:
+      tags:
+      - Users
+      summary: Get a single user
+      description: Retrieves the requested user's data.
+      operationId: get-user
+      parameters:
+      - name: name
+        in: path
+        description: The name of the user to retrieve.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
   /board/{row}/{column}:
     get:
       tags:
@@ -111,50 +159,9 @@ paths:
                   value: Square is not empty.
                 invalidMark:
                   value: Invalid Mark (X or O).
+
 components:
   schemas:
-    errorMessage:
-      maxLength: 256
-      type: string
-      description: A text message describing an error
-    coordinate:
-      maximum: 3
-      minimum: 1
-      type: integer
-      example: 1
-    mark:
-      type: string
-      description: Possible values for a board square. `.` means empty square.
-      example: "."
-      enum:
-      - "."
-      - X
-      - O
-    board:
-      maxItems: 3
-      minItems: 3
-      type: array
-      items:
-        maxItems: 3
-        minItems: 3
-        type: array
-        items:
-          $ref: '#/components/schemas/mark'
-    winner:
-      type: string
-      description: Winner of the game. `.` means nobody has won yet.
-      example: "."
-      enum:
-      - "."
-      - X
-      - O
-    status:
-      type: object
-      properties:
-        winner:
-          $ref: '#/components/schemas/winner'
-        board:
-          $ref: '#/components/schemas/board'
     user:
       type: object
       properties:
@@ -174,21 +181,3 @@ components:
       items:
         $ref: '#/components/schemas/user'
   parameters:
-    rowParam:
-      name: row
-      in: path
-      description: Board row (vertical coordinate)
-      required: true
-      style: simple
-      explode: false
-      schema:
-        $ref: '#/components/schemas/coordinate'
-    columnParam:
-      name: column
-      in: path
-      description: Board column (horizontal coordinate)
-      required: true
-      style: simple
-      explode: false
-      schema:
-        $ref: '#/components/schemas/coordinate'
