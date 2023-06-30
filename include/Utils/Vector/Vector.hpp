@@ -306,7 +306,9 @@ template <typename T> constexpr const T *Vector<T>::data() const noexcept {
 
 // // Capacity
 //
-// template <typename T> constexpr bool Vector<T>::empty() const noexcept {}
+template <typename T> constexpr bool Vector<T>::empty() const noexcept {
+	return m_size == 0;
+}
 template <typename T>
 constexpr auto Vector<T>::size() const noexcept -> size_type {
   return m_size;
@@ -318,7 +320,9 @@ constexpr auto Vector<T>::size() const noexcept -> size_type {
 // constexpr auto Vector<T>::capacity() const noexcept -> size_type {}
 
 // // Modifiers
-// template <typename T> constexpr void Vector<T>::clear() noexcept {}
+template <typename T> constexpr void Vector<T>::clear() noexcept {
+	m_size = 0;
+}
 // template <typename T>
 // constexpr auto Vector<T>::insert(const_iterator pos, const T &value)
 //     -> iterator {}
