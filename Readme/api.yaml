@@ -5,7 +5,7 @@ info:
     This API allows for managment of users, transactions and queries of the blockchain.
   version: 1.0.0
 tags:
-  - name: Gameplay
+  - name: Gamepla
 paths:
 
   # Whole board operations
