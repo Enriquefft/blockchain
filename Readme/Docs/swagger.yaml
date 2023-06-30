@@ -70,7 +70,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user'
-
+  /login:
+    post:
+      tags:
+      - Users
+      summary: Login
+      description: Logs in a user and returns the user object.
+      operationId: post-login
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the user to login.
+                  example: John Doe
+                password:
+                  type: string
+                  description: The password of the user to login.
+                  example: password
+  /register:
+    post:
+      tags:
+      - Users
+      summary: Register
+      description: Registers a new user and returns the user object.
+      operationId: post-register
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the user to login.
+                  example: John Doe
+                password:
+                  type: string
+                  description: The password of the user to login.
+                  example: password
 
 components:
   schemas:
@@ -92,4 +147,4 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/user'
-  parameters:
+  # parameters:
