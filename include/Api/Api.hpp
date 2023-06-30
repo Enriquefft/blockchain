@@ -1,9 +1,14 @@
 #ifndef API
 #define API
 
-class Api {
+#include "crow.h"
 
-  void setup();
+class Api {
+public:
+  void run();
+
+private:
+  crow::SimpleApp app;
 };
 
 #endif // !API

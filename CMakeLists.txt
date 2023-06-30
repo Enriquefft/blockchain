@@ -15,8 +15,8 @@ add_subdirectory(src/BlockChain)
 add_subdirectory(src/Utils)
 add_subdirectory(src/Api)
 
-# target_include_directories(cachimbo_coin PRIVATE include/BlockChain)
-# target_include_directories(cachimbo_coin PRIVATE include/Utils)
+target_include_directories(cachimbo_coin PRIVATE include/BlockChain)
+target_include_directories(cachimbo_coin PRIVATE include/Utils)
 # target_include_directories(cachimbo_coin PRIVATE include/Utils)
 
 target_link_libraries(cachimbo_coin PRIVATE BlockChain)
