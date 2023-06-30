@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: UteCoin REST API
+  description: |
+    This API allows for managment of users, transactions and queries of the blockchain.
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- name: blockchain
+paths:
+  /users:
+    get:
+      tags:
+      - Gameplay
+      summary: Get all the users
+      description: Retrieves a list of all the user objects.
+      operationId: get-users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+  /board/{row}/{column}:
+    get:
+      tags:
+      - Gameplay
+      summary: Get a single board square
+      description: Retrieves the requested square.
+      operationId: get-square
+      parameters:
+      - name: row
+        in: path
+        description: Board row (vertical coordinate)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/coordinate'
+      - name: column
+        in: path
+        description: Board column (horizontal coordinate)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/coordinate'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mark'
+        "400":
+          description: The provided parameters are incorrect
+          content:
+            text/html:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+              example: Illegal coordinates
+    put:
+      tags:
+      - Gameplay
+      summary: Set a single board square
+      description: Places a mark on the board and retrieves the whole board and the
+        winner (if any).
+      operationId: put-square
+      parameters:
+      - name: row
+        in: path
+        description: Board row (vertical coordinate)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/coordinate'
+      - name: column
+        in: path
+        description: Board column (horizontal coordinate)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/coordinate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mark'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+        "400":
+          description: The provided parameters are incorrect
+          content:
+            text/html:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+              examples:
+                illegalCoordinates:
+                  value: Illegal coordinates.
+                notEmpty:
+                  value: Square is not empty.
+                invalidMark:
+                  value: Invalid Mark (X or O).
+components:
+  schemas:
+    errorMessage:
+      maxLength: 256
+      type: string
+      description: A text message describing an error
+    coordinate:
+      maximum: 3
+      minimum: 1
+      type: integer
+      example: 1
+    mark:
+      type: string
+      description: Possible values for a board square. `.` means empty square.
+      example: "."
+      enum:
+      - "."
+      - X
+      - O
+    board:
+      maxItems: 3
+      minItems: 3
+      type: array
+      items:
+        maxItems: 3
+        minItems: 3
+        type: array
+        items:
+          $ref: '#/components/schemas/mark'
+    winner:
+      type: string
+      description: Winner of the game. `.` means nobody has won yet.
+      example: "."
+      enum:
+      - "."
+      - X
+      - O
+    status:
+      type: object
+      properties:
+        winner:
+          $ref: '#/components/schemas/winner'
+        board:
+          $ref: '#/components/schemas/board'
+    users:
+      maxItems: 100
+      minItems: 0
+      type: array
+      items: {}
+  parameters:
+    rowParam:
+      name: row
+      in: path
+      description: Board row (vertical coordinate)
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/coordinate'
+    columnParam:
+      name: column
+      in: path
+      description: Board column (horizontal coordinate)
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/coordinate'
