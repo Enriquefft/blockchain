@@ -32,6 +32,21 @@ struct Data {
     RECEIVER_NAME_DESCENDING
   };
 
+  template <CompareType T>
+  [[nodiscard]] Credit get() const
+    requires(T == CompareType::MONEY_ASCENDING ||
+             T == CompareType::MONEY_DESCENDING);
+  template <CompareType T>
+  [[nodiscard]] TIME get() const
+    requires(T == CompareType::TIME_ASCENDING ||
+             T == CompareType::TIME_DESCENDING);
+  template <CompareType T>
+  [[nodiscard]] std::string get() const
+    requires(T == CompareType::SENDER_NAME_ASCENDING ||
+             T == CompareType::SENDER_NAME_DESCENDING ||
+             T == CompareType::RECEIVER_NAME_ASCENDING ||
+             T == CompareType::RECEIVER_NAME_DESCENDING);
+
   template <CompareType T> class Compare {
 
   public:
@@ -93,5 +108,19 @@ extern template class Data::Compare<Data::CompareType::SENDER_NAME_DESCENDING>;
 extern template class Data::Compare<Data::CompareType::RECEIVER_NAME_ASCENDING>;
 extern template class Data::Compare<
     Data::CompareType::RECEIVER_NAME_DESCENDING>;
+
+extern template Credit Data::get<Data::CompareType::MONEY_ASCENDING>() const;
+extern template Credit Data::get<Data::CompareType::MONEY_DESCENDING>() const;
+extern template Data::TIME Data::get<Data::CompareType::TIME_ASCENDING>() const;
+extern template Data::TIME
+Data::get<Data::CompareType::TIME_DESCENDING>() const;
+extern template std::string
+Data::get<Data::CompareType::SENDER_NAME_ASCENDING>() const;
+extern template std::string
+Data::get<Data::CompareType::SENDER_NAME_DESCENDING>() const;
+extern template std::string
+Data::get<Data::CompareType::RECEIVER_NAME_ASCENDING>() const;
+extern template std::string
+Data::get<Data::CompareType::RECEIVER_NAME_DESCENDING>() const;
 
 #endif // DATA_HPP

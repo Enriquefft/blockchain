@@ -1,23 +1,23 @@
 cmake_minimum_required(VERSION 3.25)
 
-add_library(BlockChain ${CMAKE_CURRENT_SOURCE_DIR}/BlockChain.cpp)
+add_library(Utils)
 
 target_sources(
-  BlockChain
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Data.cpp
-         ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/Heap/Heap.cpp
-         ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/BST/BST.cpp)
+  Utils
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Deque/Deque.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/ForwardList/ForwardList.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/RadixTrie/RadixTrie.cpp)
 
 # Include include/BlockChainFloder
 get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 
-target_include_directories(
-  BlockChain PUBLIC ${INCLUDE_FOLDER}/BlockChain
-                    ${INCLUDE_FOLDER}/BlockChain/IndexStructures)
-target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER})
+target_include_directories(Utils PUBLIC ${INCLUDE_FOLDER})
+target_include_directories(Utils PRIVATE ${INCLUDE_FOLDER}/Utils)
+
+message(STATUS "Utils include folder: ${INCLUDE_FOLDER}/BlockChain/Utils")
 
 target_compile_options(
-  BlockChain
+  Utils
   PRIVATE # Prefered warnings
           $<$<CXX_COMPILER_ID:MSVC>:/W4
           /WX>
@@ -40,9 +40,6 @@ target_compile_options(
           "-fsanitize=address,undefined")
 
 target_link_options(
-  BlockChain PUBLIC
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fsanitize=address,undefined>)
+  Utils PUBLIC $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fsanitize=address,undefined>)
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(BlockChain OpenSSL::Crypto)
-target_compile_features(BlockChain PUBLIC cxx_std_20)
+target_compile_features(Utils PUBLIC cxx_std_20)

@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <utility>
 
-// Explicit instantiation only
+// Explicit Declaration only
 #include "Utils/RadixTrie/RadixTrie.hpp"
 
 namespace Utils {

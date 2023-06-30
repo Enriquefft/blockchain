@@ -30,6 +30,35 @@ std::ostream &operator<<(std::ostream &ost, const Data &data) {
   return ost;
 }
 
+template <CompareType T>
+Credit Data::get() const
+  requires(T == CompareType::MONEY_ASCENDING ||
+           T == CompareType::MONEY_DESCENDING)
+{
+  return amount;
+}
+template <CompareType T>
+Data::TIME Data::get() const
+  requires(T == CompareType::TIME_ASCENDING ||
+           T == CompareType::TIME_DESCENDING)
+{
+  return timestamp;
+}
+template <CompareType T>
+std::string Data::get() const
+  requires(T == CompareType::SENDER_NAME_ASCENDING ||
+           T == CompareType::SENDER_NAME_DESCENDING ||
+           T == CompareType::RECEIVER_NAME_ASCENDING ||
+           T == CompareType::RECEIVER_NAME_DESCENDING)
+{
+  if constexpr (T == CompareType::SENDER_NAME_ASCENDING ||
+                T == CompareType::SENDER_NAME_DESCENDING) {
+    return sender;
+  } else {
+    return receiver;
+  }
+}
+
 // Explicit instantiation
 template class Data::Compare<Data::CompareType::MONEY_ASCENDING>;
 template class Data::Compare<Data::CompareType::MONEY_DESCENDING>;
@@ -39,3 +68,16 @@ template class Data::Compare<Data::CompareType::SENDER_NAME_ASCENDING>;
 template class Data::Compare<Data::CompareType::SENDER_NAME_DESCENDING>;
 template class Data::Compare<Data::CompareType::RECEIVER_NAME_ASCENDING>;
 template class Data::Compare<Data::CompareType::RECEIVER_NAME_DESCENDING>;
+
+template Credit Data::get<Data::CompareType::MONEY_ASCENDING>() const;
+template Credit Data::get<Data::CompareType::MONEY_DESCENDING>() const;
+template Data::TIME Data::get<Data::CompareType::TIME_ASCENDING>() const;
+template Data::TIME Data::get<Data::CompareType::TIME_DESCENDING>() const;
+template std::string
+Data::get<Data::CompareType::SENDER_NAME_ASCENDING>() const;
+template std::string
+Data::get<Data::CompareType::SENDER_NAME_DESCENDING>() const;
+template std::string
+Data::get<Data::CompareType::RECEIVER_NAME_ASCENDING>() const;
+template std::string
+Data::get<Data::CompareType::RECEIVER_NAME_DESCENDING>() const;

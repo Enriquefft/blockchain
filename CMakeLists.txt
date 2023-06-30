@@ -12,9 +12,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(cachimbo_coin src/test.cpp)
 
 add_subdirectory(src/BlockChain)
+add_subdirectory(src/Utils)
 
 target_include_directories(cachimbo_coin PUBLIC include)
 
 target_link_libraries(cachimbo_coin PRIVATE BlockChain)
+target_link_libraries(cachimbo_coin PRIVATE Utils)
+target_link_libraries(cachimbo_coin PUBLIC Crow::Crow)
 
 target_compile_features(cachimbo_coin PRIVATE cxx_std_20)
+find_package(Crow)
