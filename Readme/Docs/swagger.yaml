@@ -98,6 +98,7 @@ paths:
                   type: string
                   description: The password of the user to login.
                   example: password
+
   /register:
     post:
       tags:
@@ -126,31 +127,67 @@ paths:
                   type: string
                   description: The password of the user to login.
                   example: password
-  # /blockchain:
-  #   get:
-  #     tags:
-  #     - Blockchain
-  #     summary: Blockchain info
-  #     description: Retrieves information about the blockchain.
-  #     operationId: get-blockchain-info
-  # /blockchain/transactions:
-  #   get:
-  #     tags:
-  #     - Blockchain
-  #     summary: Get the blockchain
-  #     description: Retrieves the blockchain.
-  #     operationId: get-blockchain
-  # /blockchain/transactions/new:
-  #   post:
-  #     tags:
-  #     - Blockchain
-  #     summary: Add transaction
-  #     description: Adds a new transaction to the blockchain.
-  # /blockchain/transactions/search:
-  # /blockchain/transactions/contains:
-  # /blockchain/transactions/range_search:
-  # /blockchain/transactions/max:
-  # /blockchain/transactions/min:
+
+  /blockchain:
+    get:
+      tags:
+      - Blockchain
+      summary: Blockchain info
+      description: Retrieves information about the blockchain.
+      operationId: get-blockchain-info
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/blockchain-info'
+
+  /blockchain/transactions:
+    get:
+      tags:
+      - Blockchain
+      summary: Get the blockchain
+      description: Retrieves the blockchain.
+      operationId: get-blockchain
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/data-comparator'
+      responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/blockchain-transactions'
+
+  /blockchain/transactions/new:
+    post:
+      tags:
+      - Blockchain
+      summary: Add transaction
+      description: Adds a new transaction to the blockchain.
+      operationId: post-transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/blockchain-data'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transaction'
+  /blockchain/transactions/search:
+  /blockchain/transactions/contains:
+  /blockchain/transactions/range_search:
+  /blockchain/transactions/max:
+  /blockchain/transactions/min:
 
 components:
   schemas:
@@ -172,4 +209,32 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/user'
+    blockchain-data:
+      type: object
+      properties:
+        sender:
+          type: string
+          description: The username of the sender.
+          example: John Doe
+        recipient:
+          type: string
+          description: The username of the recipient.
+          example: Jane Doe
+        amount:
+          type: integer
+          description: The amount of coins to send.
+          example: 5
+    data-comparator:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [ "money", "time", "sender", "receiver" ]
+          description: The type of data to compare.
+          example: money
+        order:
+          type: string
+          enum: [ "asc", "desc" ]
+          description: The order of the data (asc, desc).
+          example: asc
   # parameters:
