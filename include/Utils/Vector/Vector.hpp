@@ -160,14 +160,53 @@ private:
 
 template <typename T>
 template <std::input_iterator InputIt>
-constexpr auto Vector<T>::insert(const_iterator pos, InputIt first, InputIt last) -> iterator {}
+constexpr auto Vector<T>::insert(const_iterator pos, InputIt first,
+                                 InputIt last) -> iterator {
+  size_type index = std::distance(cbegin(), pos);
+  size_type num_new_elements = std::distance(first, last);
+
+  if (m_size + num_new_elements > m_capacity) {
+    reserve(nextCapacity(m_size + num_new_elements));
+  }
+
+  // Move the existing elements from the insertion point onwards to the right
+  std::move_backward(m_data + index, m_data + m_size,
+                     m_data + m_size + num_new_elements);
+
+  std::copy(first, last, m_data + index);
+
+  m_size += num_new_elements;
+  return m_data + index;
+}
 
 template <typename T>
-template <class... Args>
-constexpr auto Vector<T>::emplace(const_iterator pos, Args &&...args) -> iterator {}
+template <typename... Args>
+constexpr auto Vector<T>::emplace(const_iterator pos, Args &&...args)
+    -> iterator {
+
+  size_type index = std::distance(cbegin(), pos);
+
+  if (m_size + 1 > m_capacity) {
+    reserve(nextCapacity(m_size + 1));
+  }
+
+  // If there are elements after position, move them to make room for the new
+  // element
+  if (index < m_size) {
+    std::move_backward(m_data + index, m_data + m_size, m_data + m_size + 1);
+  }
+
+  new (m_data + index) T(std::forward<Args>(args)...);
+
+  ++m_size;
+
+  return iterator(m_data + index);
+}
 
 template <typename T>
-constexpr Vector<T>::Vector(size_type count) : m_size{count}, m_capacity{nextCapacity(m_size)}, m_data{ new T[m_capacity]} {
+constexpr Vector<T>::Vector(size_type count)
+    : m_size{count}, m_capacity{nextCapacity(m_size)}, m_data{
+                                                           new T[m_capacity]} {
   std::cout << "Vector(size_type count)\n";
   for (size_type i = 0; i < count; ++i) {
     std::cout << "i: " << i << "\n";
@@ -304,201 +343,206 @@ template <typename T> constexpr const T *Vector<T>::data() const noexcept {
 // // Capacity
 //
 template <typename T> constexpr bool Vector<T>::empty() const noexcept {
-	return m_size == 0;
+  return m_size == 0;
 }
 template <typename T>
 constexpr auto Vector<T>::size() const noexcept -> size_type {
   return m_size;
 }
 
-template <typename T> constexpr void Vector<T>::reserve(size_type newCap){
-  if (newCap > capacity_) {
-    T* newData = new T[newCap];
-    std::move(begin(), end(), newData);
-    delete[] data_;
-    data_ = newData;
-    capacity_ = newCap;
+template <typename T> constexpr void Vector<T>::reserve(size_type newCap) {
+
+  if (newCap <= m_capacity) {
+    return;
   }
-} 
+
+  gsl::owner<T *> new_data = new T[newCap];
+  std::move(begin(), end(), new_data);
+  delete[] m_data;
+  m_data = new_data;
+  m_capacity = newCap;
+}
+
 template <typename T> constexpr void Vector<T>::shrinkToFit() {
-  if (size_ < capacity_) {
-    T* newData = new T[size_];
-    std::move(begin(), end(), newData);
-    delete[] data_;
-    data_ = newData;
-    capacity_ = size_;
+
+  if (m_size == m_capacity) {
+    return;
   }
+
+  gsl::owner<T *> new_data = new T[m_size];
+  std::move(begin(), end(), new_data);
+  delete[] m_data;
+  m_data = new_data;
+  m_capacity = m_size;
 }
 template <typename T>
-constexpr auto Vector<T>::capacity() const noexcept -> size_type { return m_capacity; }
+constexpr auto Vector<T>::capacity() const noexcept -> size_type {
+  return m_capacity;
+}
 
 // // Modifiers
 template <typename T> constexpr void Vector<T>::clear() noexcept {
-	m_size = 0;
-}
-template <typename T>
-constexpr auto Vector<T>::insert(const_iterator pos, const T &value)-> iterator {
-  size_type index = std::distance(cbegin(),pos);
 
-  if(index > size()){
+  for (size_type i = 0; i < m_size; ++i) {
+    m_data[i].~T();
+  }
+  m_size = 0;
+}
+
+template <typename T>
+constexpr auto Vector<T>::insert(const_iterator pos, const T &value)
+    -> iterator {
+  size_type index = std::distance(cbegin(), pos);
+
+  if (index > size()) {
     throw std::out_of_range("Insert position is out of range");
   }
-  if(m_size == m_capacity){
-    //realloc
+  if (m_size == m_capacity) {
+    reserve(nextCapacity(m_capacity + 1));
   }
-  std::copy_backward(pos,end(),end() + 1);
+  std::move_backward(pos, end(), end() + 1);
   *pos = value;
   m_size++;
   return begin() + index;
 }
+
 template <typename T>
-constexpr auto Vector<T>::insert(const_iterator pos, T &&value) -> iterator{
-  size_type index = std::distance(cbegin(),pos);
+constexpr auto Vector<T>::insert(const_iterator pos, T &&value) -> iterator {
 
-  if(index > size()){
+  size_type index = std::distance(cbegin(), pos);
+
+  if (index > size()) {
     throw std::out_of_range("Insert position is out of range");
   }
-  if(m_size == m_capacity){
-    //realloc
+  if (m_size == m_capacity) {
+    reserve(nextCapacity(m_capacity + 1));
   }
 
-  std::copy_backward(pos,v.end,v.end() + 1);
-  *pos = std::move(value);
-  m_size++;
-  return begin() + index;
-} 
-template <typename T> constexpr auto Vector<T>::insert(const_iterator
-pos, size_type count,const T &value) -> iterator {
+  std::move_backward(m_data + index, m_data + m_size, m_data + m_size + 1);
 
-  size_type index = std::distance(cbegin(),pos);
+  m_data[index] = std::forward<T>(value);
 
-  if(index > size()){
+  ++m_size;
+
+  return iterator(m_data + index);
+}
+
+template <typename T>
+constexpr auto Vector<T>::insert(const_iterator pos, size_type count,
+                                 const T &value) -> iterator {
+
+  size_type index = std::distance(cbegin(), pos);
+
+  if (index > size()) {
     throw std::out_of_range("Insert position is out of range");
   }
-  if(m_size == m_capacity){
-    //ralloc
+  if (m_size == m_capacity) {
+    reserve(nextCapacity(m_capacity + count));
   }
+  std::move_backward(m_data + index, m_data + m_size, m_data + m_size + count);
+  std::fill(m_data + index, m_data + index + count, value);
 
-  std::copy_backward(pos,end(),end() + count);
-
-  for(size_type i = 0;i<count; i++){
-    m_data[index + i] = value;
-  }
   m_size += count;
 
-  return begin() + index;
+  return m_data + index;
 }
 
 template <typename T>
-constexpr iterator Vector<T>::insert(const_iterator pos,std::initializer_list<T> ilist) {
-  return insert(pos,ilist.begin(),ilist.end());
+constexpr auto Vector<T>::insert(const_iterator pos,
+                                 std::initializer_list<T> ilist) -> iterator {
+  return insert(pos, ilist.begin(), ilist.end());
 }
 
-template <typename T> constexpr iterator Vector<T>::erase(const_iterator pos){
-  size_type index = std:distance(cbegin(),pos);
+template <typename T>
+constexpr auto Vector<T>::erase(const_iterator pos) -> iterator {
+  size_type index = std::distance(cbegin(), pos);
 
-  if(index >= size()){
+  if (index >= size()) {
     throw std::out_of_range("Erase position is out of range");
   }
   std::move(begin() + index + 1, end(), begin() + index);
   --m_size;
 
   return begin() + index;
-} 
-template <typename T> constexpr iterator Vector<T>::erase(const_iterator first, const_iterator last) 
-{
-  size_type indexFirst = std::distance(cbegin(),first);
-  size_type indexLast = std::distance(cbegin(),last);
-  size_type count = std::distance(first, last);
+}
 
-  if(indexFirst > size() || indexLast > size()){
+template <typename T>
+constexpr auto Vector<T>::erase(const_iterator first, const_iterator last)
+    -> iterator {
+  size_type index_first = std::distance(cbegin(), first);
+  size_type index_last = std::distance(cbegin(), last);
+
+  if (index_first > size() || index_last > size()) {
     throw std::out_of_range("Erase range is out of range");
   }
 
-  std::move(begin() + index)
+  std::move(m_data + index_last, m_data + m_size, m_data + index_first);
+
+  size_type new_size = m_size - (index_last - index_first);
+
+  // Destroy the leftover elements
+  for (size_type i = new_size; i < m_size; ++i) {
+    m_data[i].~T();
+  }
+
+  m_size = new_size;
+
+  return iterator(m_data + index_first);
 }
 
 template <typename T> constexpr void Vector<T>::pushBack(const T &value) {
+
+  if (m_size == m_capacity) {
+    reserve(nextCapacity(m_capacity + 1));
+  }
+
   m_data[m_size++] = value;
 }
 template <typename T> constexpr void Vector<T>::pushBack(T &&value) {
+  if (m_size == m_capacity) {
+    reserve(nextCapacity(m_capacity + 1));
+  }
   m_data[m_size++] = std::move(value);
 }
 
 template <typename T> constexpr void Vector<T>::popBack() {
-  m_size--;
+  // Call the destructor for the last element
+  if (m_size == 0) {
+    throw std::out_of_range("Vector is empty");
+  }
+  m_data[--m_size].~T();
 }
 
 template <typename T>
 template <class... Args>
 constexpr auto Vector<T>::emplaceBack(Args &&...args) -> reference {
-  if (size_ == capacity_) {
-      // Realocate or expand the underlying array here
+  if (m_size == m_capacity) {
+    reserve(nextCapacity(m_capacity + 1));
   }
-  data_[size_] = T(std::forward<Args>(args)...);
-  ++size_;
-  return data_[size_-1];
+  m_data[m_size++] = T(std::forward<Args>(args)...);
+  return m_data[m_size - 1];
 }
 
-template <typename T> constexpr void Vector<T>::resize(size_type count) {
-  count = nextCapacity(count);
+template <typename T> constexpr void Vector<T>::resize(size_type newSize) {
+  if (newSize < m_size) {
+    // If the new size is smaller, destroy the extra elements
+    for (size_type i = newSize; i < m_size; ++i) {
+      m_data[i].~T();
+    }
+  } else if (newSize > m_size) {
+    // If the new size is larger, check if the vector needs to be resized
+    if (newSize > m_capacity) {
+      reserve(nextCapacity(newSize));
+    }
 
-  if(count == m_capacity){ return; }
-  else if(count < m_capacity){
-    m_capacity = count;
-    pointer new_m_data = new value_type[m_capacity];
-    for(size_type i = 0 ; i < count ; ++i){
-      new_m_data[i] = m_data[i];
+    for (size_type i = m_size; i < newSize; ++i) {
+      m_data[i] = T();
     }
-    delete m_data;
-    m_data = new_m_data;
   }
-  else if(count > m_capacity){
-    pointer  new_m_data = new value_type[count];
-    for(size_type i = 0; i < m_capacity ; ++i){
-      new_m_data[i] = m_data[i];
-    }
-    m_capacity = count;
-    delete m_data;
-    m_data = new_m_data;
-  }
-}
-template <typename T>
-constexpr void Vector<T>::resize(size_type count, const value_type &value){
-  count = nextCapacity(count);
-  
-  if(count == m_capacity){ return; }
-  else if(count < m_capacity){ 
-    m_capacity = count;
-    pointer new_m_data = value_type[m_capacity];
-    for(size_type i=0; i < count ; ++i){
-      new_m_data[i] = m_data[i];
-    }
-    delete m_data;
-    m_data = new_m_data;
-  }
-  else if(count > m_capacity){
-    pointer new_m_data = new value_type[count];
-    for(size_type i=0; i < m_capacity; ++i){
-      new_m_data[i] = m_data[i];
-    }
-    for(size_type i = m_capacity; i < count ;++i){
-      new_m_data[i] = value;
-    }
-    m_capacity = count;
-    delete m_data;
-    m_data = new_m_data;
-  }
+
+  m_size = newSize;
 }
 
-// Iterators
-// constexpr iterator begin() noexcept;
-// constexpr const_iterator begin() const noexcept;
-// constexpr const_iterator cbegin() const noexcept;
-//
-// constexpr iterator end() noexcept;
-// constexpr const_iterator end() const noexcept;
-// constexpr const_iterator cend() const noexcept;
 template <typename T> constexpr auto Vector<T>::begin() noexcept -> iterator {
   return iterator(m_data);
 }

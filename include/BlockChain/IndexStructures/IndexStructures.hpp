@@ -8,11 +8,11 @@ namespace DataStructures {
 using CompareType = Data::CompareType;
 
 // Defines virtual and common methods for search structures
-template <CompareType T> class SearchStructureBase {
-	virtual void insert() = 0;
-	virtual void remove() = 0;
-	virtual bool search() = 0;
-	virtual void display() = 0;
+class SearchStructures {
+  virtual void insert() = 0;
+  virtual void remove() = 0;
+  virtual bool search() = 0;
+  virtual void display() = 0;
 };
 
 // Stores and manages amortization.
