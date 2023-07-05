@@ -55,7 +55,7 @@ paths:
       description: Retrieves the requested user's data.
       operationId: get-user
       parameters:
-      - username: username
+      - name: username
         in: path
         description: The username of the user to retrieve.
         required: true
