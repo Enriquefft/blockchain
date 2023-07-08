@@ -180,6 +180,83 @@
           }
         }
       }
+    },
+    "/blockchain" : {
+      "get" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Blockchain info",
+        "description" : "Retrieves information about the blockchain.",
+        "operationId" : "get-blockchain-info",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/blockchain-info"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blockchain/transactions" : {
+      "get" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Get the blockchain",
+        "description" : "Retrieves the blockchain.",
+        "operationId" : "get-blockchain",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "comparator",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/data-comparator"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/blockchain-transactions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blockchain/transactions/new" : {
+      "post" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Add transaction",
+        "description" : "Adds a new transaction to the blockchain.",
+        "operationId" : "post-transaction",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/data"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/transaction"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
@@ -207,6 +284,81 @@
         "type" : "array",
         "items" : {
           "$ref" : "#/components/schemas/user"
+        }
+      },
+      "data" : {
+        "type" : "object",
+        "properties" : {
+          "sender" : {
+            "type" : "string",
+            "description" : "The username of the sender.",
+            "example" : "John Doe"
+          },
+          "recipient" : {
+            "type" : "string",
+            "description" : "The username of the recipient.",
+            "example" : "Jane Doe"
+          },
+          "amount" : {
+            "type" : "integer",
+            "description" : "The amount of coins to send.",
+            "example" : 5
+          }
+        }
+      },
+      "transaction" : {
+        "type" : "object",
+        "properties" : {
+          "timestamp" : {
+            "type" : "string",
+            "description" : "The timestamp of the transaction.",
+            "example" : "2019-05-01 12:00:00"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/data"
+          },
+          "hash" : {
+            "type" : "string",
+            "description" : "The hash of the transaction"
+          }
+        }
+      },
+      "blockchain-transactions" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/transaction"
+        }
+      },
+      "data-comparator" : {
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "money", "time", "sender", "receiver" ],
+            "description" : "The type of data to compare.",
+            "example" : "money"
+          },
+          "order" : {
+            "type" : "string",
+            "enum" : [ "asc", "desc" ],
+            "description" : "The order of the data (asc, desc).",
+            "example" : "asc"
+          }
+        }
+      },
+      "blockchain-info" : {
+        "type" : "object",
+        "properties" : {
+          "length" : {
+            "type" : "integer",
+            "description" : "The length of the blockchain.",
+            "example" : 10
+          },
+          "last-update" : {
+            "type" : "string",
+            "description" : "The last time the blockchain was updated.",
+            "example" : "2019-05-01 12:00:00"
+          }
         }
       }
     }
