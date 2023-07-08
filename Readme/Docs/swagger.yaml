@@ -236,6 +236,10 @@ components:
         hash:
           type: string
           description: The hash of the transaction
+    blockchain-transactions:
+      type: array
+      items:
+        $ref: '#/components/schemas/transaction'
     data-comparator:
       type: object
       properties:
