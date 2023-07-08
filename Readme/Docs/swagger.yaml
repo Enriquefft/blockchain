@@ -151,18 +151,18 @@ paths:
       description: Retrieves the blockchain.
       operationId: get-blockchain
       parameters:
-        - in: path
+        - in: query
           name: comparator
-          required: false
+          required: true
           schema:
             $ref: '#/components/schemas/data-comparator'
       responses:
-      "200":
-        description: OK
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/blockchain-transactions'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/blockchain-transactions'
 
   /blockchain/transactions/new:
     post:
