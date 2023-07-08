@@ -183,11 +183,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/transaction'
-  /blockchain/transactions/search:
-  /blockchain/transactions/contains:
-  /blockchain/transactions/range_search:
-  /blockchain/transactions/max:
-  /blockchain/transactions/min:
+  # /blockchain/transactions/search:
+  # /blockchain/transactions/contains:
+  # /blockchain/transactions/range_search:
+  # /blockchain/transactions/max:
+  # /blockchain/transactions/min:
 
 components:
   schemas:
