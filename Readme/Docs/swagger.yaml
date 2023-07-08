@@ -150,12 +150,12 @@ paths:
       summary: Get the blockchain
       description: Retrieves the blockchain.
       operationId: get-blockchain
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/data-comparator'
+      parameters:
+        - in: path
+          name: comparator
+          required: false
+          schema:
+            $ref: '#/components/schemas/data-comparator'
       responses:
       "200":
         description: OK
