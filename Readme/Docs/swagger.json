@@ -299,6 +299,153 @@
           }
         }
       }
+    },
+    "/blockchain/transactions/contains/{query}" : {
+      "get" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Search transactions with the query",
+        "description" : "Searches the specified index structure for transactions containing the query.",
+        "operationId" : "get-query-search",
+        "parameters" : [ {
+          "name" : "comparator",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/data-comparator"
+          }
+        }, {
+          "name" : "structure",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/index-structure"
+          }
+        }, {
+          "name" : "query",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/blockchain-transactions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blockchain/transactions/range/" : {
+      "get" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Search transactions in range",
+        "description" : "Searches the specified index structure for transactions in the specified range.",
+        "operationId" : "get-range-search",
+        "parameters" : [ {
+          "name" : "min",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "max",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "comparator",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/data-comparator"
+          }
+        }, {
+          "name" : "structure",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/index-structure"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/blockchain-transactions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blockchain/transactions/min" : {
+      "get" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Search transactions with minimum value",
+        "description" : "Searches the blockchain for transactions with the minimum value.",
+        "operationId" : "get-min-search",
+        "parameters" : [ {
+          "name" : "comparator",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/data-comparator"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/transaction"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blockchain/transactions/max" : {
+      "get" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Search transactions with maximum value",
+        "description" : "Searches the blockchain for transactions with the maximum value.",
+        "operationId" : "get-max-search",
+        "parameters" : [ {
+          "name" : "comparator",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/data-comparator"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/transaction"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
