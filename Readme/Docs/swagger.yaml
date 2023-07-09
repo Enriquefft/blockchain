@@ -190,15 +190,21 @@ paths:
       description: Searches the specified index structure for transactions matching the query.
       operationId: get-transaction-search
       parameters:
-        - in: query
-          name: comparator
+        - name: comparator
+          in: query
           required: true
           schema:
             $ref: '#/components/schemas/data-comparator'
-          name: structure
+        - name: structure
+          in: query
           required: true
           schema:
             $ref: '#/components/schemas/index-structure'
+        - name: query
+          in: path
+          required: true
+          schema:
+            type: string
 
 
   # /blockchain/transactions/contains:
