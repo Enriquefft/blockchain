@@ -182,6 +182,7 @@ paths:
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/transaction'
   /blockchain/transactions/search/{query}:
     get:
       tags:
