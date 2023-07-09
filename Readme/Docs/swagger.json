@@ -257,6 +257,48 @@
           }
         }
       }
+    },
+    "/blockchain/transactions/search/{query}" : {
+      "get" : {
+        "tags" : [ "Blockchain" ],
+        "summary" : "Search transactions",
+        "description" : "Searches the specified index structure for transactions matching the query.",
+        "operationId" : "get-transaction-search",
+        "parameters" : [ {
+          "name" : "comparator",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/data-comparator"
+          }
+        }, {
+          "name" : "structure",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/index-structure"
+          }
+        }, {
+          "name" : "query",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/blockchain-transactions"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
@@ -360,6 +402,10 @@
             "example" : "2019-05-01 12:00:00"
           }
         }
+      },
+      "index-structure" : {
+        "type" : "string",
+        "enum" : [ "bst", "avl", "rbt", "....." ]
       }
     }
   }
