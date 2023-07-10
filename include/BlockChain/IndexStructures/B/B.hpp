@@ -6,6 +6,7 @@
 #define TODO_NADA_B_H
 
 #include "Data.hpp"
+#include <ios>
 #include <iostream>
 #include <stack>
 #include <vector>
@@ -76,7 +77,6 @@ public:
 
       salvacion.pop();
     }
-    cout << endl;
 
     return result;
   }
@@ -109,40 +109,38 @@ private:
     friend class B;
 
   private:
+    int grado;
     value_type *keys;
     Node **children;
-    int count;
-    bool leaf;
-    int grado;
+    int count = 0;
+    bool leaf = true;
+
+    /*
+     * grado = 4
+     * keys = [d1,_,_]
+     */
 
     explicit Node(int _grado)
-        : grado(_grado), keys(nullptr), children(nullptr), count(0),
-          leaf(true) {
-      keys = new value_type[grado - 1];
-      children = new Node *[grado];
+        : grado(_grado), keys(new value_type[_grado - 1]),
+          children(new Node *[_grado]) {
+      for (int i = 0; i < _grado; i++) {
+        children[i] = nullptr;
+      }
     }
 
     ~Node() {
       delete[] keys;
-      cout << "Here1\n";
-      cout << "grado: " << grado << "\n";
-      cout << "count: " << count << "\n";
 
       for (int i = 0; i < grado; i++) {
-        cout << "i: " << i << "\n";
-        delete[] children[i];
-        cout << "end\n";
+        delete children[i];
       }
 
-      cout << "\nHere2\n";
-
       delete[] children;
-      cout << "Here3\n";
     }
 
     Node(const Node &other)
         : grado(other.grado), leaf(other.leaf), count(other.count),
-          keys(nullptr), children(nullptr) {
+          children(nullptr) {
       if (other.keys != nullptr) {
         keys = other.keys;
       }
@@ -255,7 +253,8 @@ private:
         children[count]->getElements(vec);
       }
     }
-    [[nodiscard]] size_type size(int &contador) const {
+
+    void size(int &contador) const {
       for (int i = 0; i < count; i++) {
         if (children[i] != nullptr) {
           children[i]->size(contador);
@@ -266,6 +265,7 @@ private:
         children[count]->size(contador);
       }
     }
+
     void clear() {
       delete keys;
       for (int i = 0; i < grado + 1; i++) {

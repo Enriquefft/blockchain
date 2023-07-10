@@ -18,7 +18,7 @@ public:
 private:
   gsl::owner<Data> *m_elements;
   int m_size = 0;
-  int m_capacit0 = 3;
+  int m_capacit = 3;
 
   Data::Compare<type> comparator;
 

@@ -1,14 +1,11 @@
 #ifndef SET_HPP
 #define SET_HPP
 
-#include <concepts>
-#include <functional>
+#include "RBTree/RBTree.hpp"
 
-enum class Container { BST, AVL, HASH };
-using enum Container;
+namespace Utils {
 
-template <class Key, class Compare = std::less<Key>, Container = BST>
-class SetBase {
+template <class Key, class Compare = std::less<Key>> class Set {
   // Virtual parent class
 public:
   template <bool IsConst> class _iterator;
@@ -28,17 +25,44 @@ public:
   using const_iterator = _iterator<true>;
 
   // Constructors
-  SetBase() = default;
-  SetBase(const SetBase &) = default;
-  SetBase(SetBase &&) noexcept = default;
-  SetBase &operator=(const SetBase &) = default;
-  SetBase &operator=(SetBase &&) noexcept = default;
-  SetBase(std::initializer_list<value_type>);
-  virtual ~SetBase() = delete;
+  Set() = default;
+
+  Set(std::initializer_list<value_type>);
 
   // Iterators
+  iterator begin() noexcept;
+  [[nodiscard]] const_iterator begin() const noexcept;
+  [[nodiscard]] const_iterator cbegin() const noexcept;
+
+  iterator end() noexcept;
+  [[nodiscard]] const_iterator end() const noexcept;
+  [[nodiscard]] const_iterator cend() const noexcept;
+
+  // Capacity
+  [[nodiscard]] bool empty() const noexcept;
+  [[nodiscard]] size_type size() const noexcept;
+
+  // Modifiers
+  void clear() noexcept;
+  std::pair<iterator, bool> insert(const value_type &);
+  std::pair<iterator, bool> insert(value_type &&);
+  template <class... Args> std::pair<iterator, bool> emplace(Args &&...);
+
+  template <bool IsConst> iterator erase(_iterator<IsConst> position) noexcept;
+  template <bool IsConst>
+  iterator erase(_iterator<IsConst> first, _iterator<IsConst> last) noexcept;
+  iterator erase(const value_type &);
+
+  // Lookup
+  [[nodiscard]] size_type count(const value_type &) const noexcept;
+
+  iterator find(const value_type &) noexcept;
+  [[nodiscard]] const_iterator find(const value_type &) const noexcept;
+
+  bool contains(const value_type &) const noexcept;
 
 private:
 };
+} // namespace Utils
 
 #endif // !SET_HPP

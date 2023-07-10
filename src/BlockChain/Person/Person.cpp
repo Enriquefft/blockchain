@@ -1,7 +1,6 @@
 #include "Person/Person.hpp"
 
 using Person::Client;
-using Person::Clients;
 using Person::Wallet;
 
 constexpr std::string_view CHARS =
@@ -63,18 +62,4 @@ void Client::updateBalance(const int &amount) {
   if (new_balance < 0) {
     throw std::runtime_error("Insufficient Founds");
   }
-}
-
-void Clients::addClient(const string &name) {
-  Client client(name);
-  while (
-      // if m_wallet_id of client exists creae new wallet id
-      std::find_if(m_clients.begin(), m_clients.end(),
-                   [client](Client &otherClient) {
-                     return otherClient.wallet().m_wallet_id ==
-                            client.wallet().m_wallet_id;
-                   }) != m_clients.end()) {
-    client.regenWalletId();
-  }
-  m_clients.push_back(std::move(client));
 }

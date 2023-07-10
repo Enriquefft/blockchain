@@ -9,15 +9,15 @@ project(
 # set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# add_executable(cachimbo_coin src/test.cpp)
-add_executable(cachimbo_coin src/main.cpp)
+add_executable(cachimbo_coin src/test.cpp)
+# add_executable(cachimbo_coin src/main.cpp)
 
 add_subdirectory(src/BlockChain)
 add_subdirectory(src/Utils)
 add_subdirectory(src/Api)
 
-# target_include_directories(cachimbo_coin PRIVATE include/BlockChain)
-# target_include_directories(cachimbo_coin PRIVATE include/Utils)
+target_include_directories(cachimbo_coin PRIVATE include)
+
 # target_include_directories(cachimbo_coin PRIVATE include/Utils)
 
 target_link_libraries(cachimbo_coin PRIVATE BlockChain)

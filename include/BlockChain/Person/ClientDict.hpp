@@ -1,16 +1,16 @@
 #ifndef CLIENT_DICT_HPP
 #define CLIENT_DICT_HPP
 
+#include "ForwardList/ForwardList.hpp"
 #include "Person.hpp"
-#include "Utils/Array/Array.hpp"
-#include "Utils/ForwardList/ForwardList.hpp"
+#include "Vector/Vector.hpp"
 
 namespace Person {
 
 using Person::Client;
 using std::pair;
-using Utils::Array;
 using Utils::ForwardList;
+using Utils::Vector;
 
 class ClientDict {
   template <bool IsConst> class ClientIterator;
@@ -43,10 +43,9 @@ public:
   [[nodiscard]] const_reference at(const string &name) const;
 
   reference operator[](const string &name);
-  // count_if
 
 private:
-  Array<ForwardList<pair<string, Client>>> m_clients;
+  Vector<ForwardList<pair<string, Client>>> m_clients;
   size_type m_bucket_size{};
   size_type m_total_elements{};
   float m_load_factor{};

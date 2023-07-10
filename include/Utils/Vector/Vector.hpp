@@ -2,6 +2,7 @@
 #define VECTOR_HPP
 
 #include "gsl.hpp"
+#include <Array/Array.hpp>
 #include <bits/iterator_concepts.h>
 #include <cstddef>
 #include <initializer_list>
@@ -103,7 +104,7 @@ public:
 
   constexpr void popBack();
 
-  constexpr void resize(size_type count);
+  constexpr void resize(size_type newSize);
   constexpr void resize(size_type count, const value_type &value);
 
 private:
@@ -114,7 +115,7 @@ private:
   [[nodiscard]] constexpr static size_type
   nextCapacity(const size_type &newCap) noexcept;
 
-  inline static constexpr std::array<size_type, 24> POWERS = {
+  inline static constexpr Array<size_type, 24> POWERS = {
       1,     2,      4,      8,      16,      32,      64,      128,
       256,   512,    1024,   2048,   4096,    8192,    16384,   32768,
       65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608};

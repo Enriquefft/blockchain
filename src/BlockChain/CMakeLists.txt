@@ -6,14 +6,18 @@ target_sources(
   BlockChain
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Data.cpp
          ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/Heap/Heap.cpp
-         ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/BST/BST.cpp)
+         ${CMAKE_CURRENT_SOURCE_DIR}/IndexStructures/BST/BST.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Person/Person.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Person/ClientDict.cpp)
 
 # Include include/BlockChainFloder
 get_filename_component(INCLUDE_FOLDER ../../include ABSOLUTE)
 
 target_include_directories(
-  BlockChain PUBLIC ${INCLUDE_FOLDER}/BlockChain
-                    ${INCLUDE_FOLDER}/BlockChain/IndexStructures)
+  BlockChain
+  PUBLIC ${INCLUDE_FOLDER}/BlockChain
+         ${INCLUDE_FOLDER}/BlockChain/IndexStructures
+         ${INCLUDE_FOLDER}/BlockChain/Person)
 target_include_directories(BlockChain PRIVATE ${INCLUDE_FOLDER}/Utils)
 
 target_compile_options(
