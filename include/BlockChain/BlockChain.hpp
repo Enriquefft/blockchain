@@ -17,7 +17,16 @@ using std::string;
 
 using sha_256_t = Utils::Array<uint8_t, 32 /* SHA256_DIGEST_LENGTH*/>;
 
+struct BlockChainInfo {
+  // Last update
+  // number of blocks
+  std::chrono::time_point<std::chrono::utc_clock> last_entry;
+  size_t block_count = 0;
+};
+
 class BlockChain {
+  class App;
+  friend class App;
 
   inline static const uint8_t TARGET = 2;
   inline static const uint8_t BLOCK_SIZE = 4;

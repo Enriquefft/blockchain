@@ -62,6 +62,7 @@ public:
   bool contains(const value_type &) const noexcept;
 
 private:
+  RedBlackTree<value_type, key_compare> tree;
 };
 } // namespace Utils
 
