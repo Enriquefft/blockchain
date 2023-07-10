@@ -13,8 +13,11 @@ using blockchain::BlockChain;
 using blockchain::sha_256_t;
 
 using std::string;
+using Utils::Array;
 
-static std::string Sha2String(const sha_256_t &sha) {
+namespace { // Anonymous namespace
+
+std::string Sha2String(const sha_256_t &sha) {
 
   std::stringstream stream;
 
@@ -26,39 +29,81 @@ static std::string Sha2String(const sha_256_t &sha) {
   return stream.str();
 }
 
-static sha_256_t Sha256(std::string_view str) {
+sha_256_t Sha256(std::string_view str) {
 
   // Transorm to bytes (unsigned char)
   std::span<const unsigned char> data(
       std::bit_cast<const unsigned char *>(str.data()), str.size());
 
-  std::array<uint8_t, SHA256_DIGEST_LENGTH> result{};
+  Array<uint8_t, SHA256_DIGEST_LENGTH> result{};
   SHA256(data.data(), data.size(), result.data());
 
   return result;
 }
 
+} // namespace
+
 sha_256_t BlockChain::Block::hash() {
-  return Sha256(Sha2String(header.previous_hash) + // Previous hash
-                std::to_string(header.nounce) +
-                std::to_string(static_cast<int>(data.amount)) + // Amount
-                std::format("{:%Y%m%d%H%M}", data.timestamp) +  // Time
-                data.sender +                                   // Sender
-                data.receiver);                                 // Receiver
+
+  string amount;
+  string time;
+  string sender;
+  string receiver;
+
+  for (size_type i = 0; i < BLOCK_SIZE; i++) {
+    if (m_data[i]) {
+      amount += std::to_string(static_cast<int>(m_data[i]->amount));
+      time += std::format("{:%Y%m%d%H%M}", m_data[i]->timestamp);
+      sender += m_data[i]->sender;
+      receiver += m_data[i]->receiver;
+    } else {
+      break;
+    }
+  }
+
+  return Sha256(Sha2String(header.previous_hash) +       // Previous hash
+                std::to_string(header.nounce) + amount + // Amount
+                time +                                   // Timestamp
+                sender +                                 // Sender
+                receiver);                               // Receiver
+}
+
+void BlockChain::Block::addData(const Data &data) {
+  if (isFull()) {
+    return;
+  }
+
+  // find first empty slot
+  for (size_type i = 0; i < BLOCK_SIZE; i++) {
+    if (!m_data[i]) {
+      m_data[i] = std::make_shared<Data>(data);
+      return;
+    }
+  }
+}
+
+bool BlockChain::Block::isFull() const {
+  return m_data[BLOCK_SIZE - 1] != nullptr;
 }
 
 // O(1)
-void BlockChain::addBlock(const Data &data, const sha_256_t &hash,
-                          const uint8_t &nonce) {
-
-  if (m_head == nullptr) {
-    m_head = new Block(data, nullptr, hash, nonce);
-    m_tail = m_head;
-    return;
-  }
-  m_tail->next = new Block(data, m_tail, hash, nonce);
-  m_tail = m_tail->next;
-}
+// void BlockChain::addBlock(const Data &data, const sha_256_t &hash,
+//                           const uint8_t &nonce) {
+//
+//   if (m_head == nullptr) {
+//     m_head = new Block(data, nullptr, hash, nonce);
+//     m_tail = m_head;
+//     return;
+//   }
+//
+//   if (m_tail->isFull()) {
+//     m_tail->next = new Block(data, m_tail, hash, nonce);
+//     m_tail = m_tail->next;
+//     return;
+//   }
+//
+//   m_tail->next = new Block(data, m_tail, hash, nonce);
+// }
 
 BlockChain::BlockChain() noexcept
     : m_head(new(std::nothrow) Block()), m_tail(m_head) {}
@@ -70,22 +115,27 @@ void BlockChain::addBlock(const Data &data) {
     m_tail = m_head;
     return;
   }
-  m_tail->next = new Block(data, m_tail);
-  m_tail = m_tail->next;
+  if (m_tail->isFull()) {
+    m_tail->next = new Block(data, m_tail);
+    m_tail = m_tail->next;
+    return;
+  }
+  m_tail->addData(data);
 }
 
 BlockChain::Block::Block()
-    : previous(nullptr),
-      data("genesis", "genesis", 0), header{sha_256_t{}, sha_256_t{}, 0} {}
-// , nullptr, sha_256_t{}, 0};
+    : previous(nullptr), m_data{std::make_shared<Data>("genesis", "genesis",
+                                                       0)},
+      header{sha_256_t{}, sha_256_t{}, 0} {}
 
 BlockChain::Block::Block(Data _data, Block *_previous, const sha_256_t &_hash,
                          const uint8_t &_nonce)
-    : previous(_previous), data(std::move(_data)),
+    : previous(_previous), m_data{std::make_shared<Data>(std::move(_data))},
       header(_previous->hash(), _hash, _nonce) {}
 
 BlockChain::Block::Block(Data _data, Block *_previous)
-    : previous(_previous), data(std::move(_data)), header(_previous->hash()) {
+    : previous(_previous), m_data{std::make_shared<Data>(std::move(_data))},
+      header(_previous->hash()) {
 
   bool found_hash = false;
   sha_256_t hash;
@@ -121,14 +171,32 @@ BlockChain::Block::Block(Data _data, Block *_previous)
 
     // Update timestamp and try again
     if (!found_hash) {
-      data.timestamp = std::chrono::utc_clock::now();
+      m_data[0]->timestamp = std::chrono::utc_clock::now();
     }
   } while (!found_hash);
 }
 
-BlockChain::reference BlockChain::getLastBlock() { return m_tail->data; }
+BlockChain::reference BlockChain::Block::getLast() {
+  for (size_type i = 0; i < BLOCK_SIZE; i++) {
+    if (!m_data[i]) {
+      return *m_data[i - 1];
+    }
+  }
+  return *m_data[BLOCK_SIZE];
+}
+BlockChain::const_reference BlockChain::Block::getLast() const {
+  for (size_type i = 0; i < BLOCK_SIZE; i++) {
+    if (!m_data[i]) {
+      return *m_data[i - 1];
+    }
+  }
+  return *m_data[BLOCK_SIZE];
+}
+
+BlockChain::reference BlockChain::getLastBlock() { return m_tail->getLast(); }
+
 BlockChain::const_reference BlockChain::getLastBlock() const {
-  return m_tail->data;
+  return m_tail->getLast();
 }
 
 // O(n) + n*hash
@@ -140,6 +208,7 @@ bool BlockChain::isConsistent() const {
 
   auto *curr = m_head->next;
   auto c = 1;
+
   for (; curr != nullptr; curr = curr->next) {
     if (curr->previous->hash() != curr->header.previous_hash) {
       std::cout << "block " << c << " is not consistent\n";
@@ -170,6 +239,8 @@ void BlockChain::randomInyection() {
   data->receiver = "RANDOM_RECEIVER" + std::to_string(data_idx);
 }
 
+void BlockChain::recalculateHashes() {}
+
 // n
 BlockChain::size_type BlockChain::size() const {
 
@@ -196,40 +267,48 @@ BlockChain::const_iterator BlockChain::begin() const {
 
 BlockChain::const_iterator BlockChain::end() const { return {}; }
 
-// template <bool IsConst>
-// using iterator_td = typename BlockChain::BlockChainIterator<IsConst>;
-
 template <bool IsConst>
 bool BlockChain::BlockChainIterator<IsConst>::operator==(
     const BlockChainIterator &rhs) const {
-  return m_curr == rhs.m_curr;
+
+  return m_curr == rhs.m_curr && m_index == rhs.m_index;
 }
 
 template <bool IsConst>
 bool BlockChain::BlockChainIterator<IsConst>::operator!=(
     const BlockChainIterator &rhs) const {
-  return m_curr != rhs.m_curr;
+  return !(*this == rhs);
 }
 
 template <bool IsConst>
-typename BlockChain::BlockChainIterator<IsConst>::reference
-BlockChain::BlockChainIterator<IsConst>::operator*() {
-  return m_curr->data;
+auto BlockChain::BlockChainIterator<IsConst>::operator*() -> reference {
+  return *m_curr->m_data[m_index];
 }
 
 template <bool IsConst>
-typename BlockChain::BlockChainIterator<IsConst>::pointer
-BlockChain::BlockChainIterator<IsConst>::operator->() {
+auto BlockChain::BlockChainIterator<IsConst>::operator->() -> pointer {
   if (m_curr == nullptr) {
     throw std::out_of_range("iterator out of range");
   }
-  return &(m_curr->data);
+  return m_curr->m_data[m_index].get();
 }
 
 template <bool IsConst>
 BlockChain::BlockChainIterator<IsConst> &
 BlockChain::BlockChainIterator<IsConst>::operator++() {
-  m_curr = m_curr->next;
+
+  if (m_index < BLOCK_SIZE - 1) {
+    m_index++;
+  } else {
+    m_index = 0;
+    m_curr = m_curr->next;
+  }
+
+  if (!m_curr->m_data[m_index]) { // End of chain, invalid iterator
+    m_curr = nullptr;
+    m_index = 0;
+  }
+
   return *this;
 }
 

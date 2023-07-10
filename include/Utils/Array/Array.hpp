@@ -48,6 +48,15 @@ public:
   constexpr reference operator[](const size_type &pos);
   constexpr const_reference operator[](const size_type &pos) const;
 
+  template <typename K, std::size_t M>
+  friend constexpr bool operator==(const Array<K, M> &lhs,
+                                   const Array<K, M> &rhs);
+
+  template <typename K, std::size_t M>
+  friend constexpr auto operator<=>(const Array<K, M> &lhs,
+                                    const Array<K, M> &rhs)
+      -> std::partial_ordering;
+
   constexpr reference front();
   [[nodiscard]] constexpr const_reference front() const;
 
@@ -189,6 +198,34 @@ constexpr auto Array<T, N>::size() const noexcept -> size_type {
   return N;
 }
 template <class T, class... U> Array(T, U...) -> Array<T, 1 + sizeof...(U)>;
+
+template <typename T, std::size_t N>
+constexpr bool operator==(const Array<T, N> &lhs, const Array<T, N> &rhs) {
+  if (lhs.size() != rhs.size()) {
+    return false;
+  }
+
+  for (size_t i = 0; i < lhs.size(); ++i) {
+    if (lhs[i] != rhs[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename T, std::size_t N>
+constexpr auto operator<=>(const Array<T, N> &lhs, const Array<T, N> &rhs)
+    -> std::partial_ordering {
+
+  std::strong_ordering order = lhs[0] <=> rhs[0];
+  for (int i = 1; i < 4; ++i) {
+    if ((lhs[i] <=> rhs[i]) != order) {
+      return std::partial_ordering::unordered;
+    }
+  }
+
+  return order;
+}
 
 } // namespace Utils
 

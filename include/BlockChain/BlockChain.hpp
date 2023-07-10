@@ -1,10 +1,11 @@
 #ifndef BLOCK_CHAIN_HPP
 #define BLOCK_CHAIN_HPP
 
+#include "Array/Array.hpp"
 #include "Data.hpp"
-#include <array>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -14,11 +15,12 @@ namespace blockchain {
 
 using std::string;
 
-using sha_256_t = std::array<uint8_t, 32 /* SHA256_DIGEST_LENGTH*/>;
+using sha_256_t = Utils::Array<uint8_t, 32 /* SHA256_DIGEST_LENGTH*/>;
 
 class BlockChain {
 
   inline static const uint8_t TARGET = 2;
+  inline static const uint8_t BLOCK_SIZE = 2;
 
 public:
   // Typedefs
@@ -29,7 +31,8 @@ public:
 
   using size_type = size_t;
 
-  void addBlock(const Data &data, const sha_256_t &hash, const uint8_t &nonce);
+  // void addBlock(const Data &data, const sha_256_t &hash, const uint8_t
+  // &nonce);
   void addBlock(const Data &data);
 
   [[nodiscard]] reference getLastBlock();
@@ -38,6 +41,8 @@ public:
   [[nodiscard]] bool isConsistent() const;
 
   void randomInyection();
+  void recalculateHashes();
+
   [[nodiscard]] size_type size() const;
 
   BlockChain() noexcept;
@@ -78,8 +83,14 @@ private:
     Block(Data _data, Block *_previous);
     Block(Data _data, Block *_previous, const sha_256_t &_hash,
           const uint8_t &_nonce);
-    [[nodiscard]] const Data &getData() const;
-    [[nodiscard]] Data &getData();
+    [[nodiscard]] const Utils::Array<const Data &, BLOCK_SIZE> &getData() const;
+    [[nodiscard]] Utils::Array<Data &, BLOCK_SIZE> &getData();
+
+    [[nodiscard]] reference getLast();
+    [[nodiscard]] const_reference getLast() const;
+
+    void addData(const Data &data);
+    [[nodiscard]] bool isFull() const;
 
   private:
     sha_256_t hash();
@@ -87,7 +98,8 @@ private:
     Block *previous;
     gsl::owner<Block *> next = nullptr;
 
-    Data data;
+    // Data data;
+    Utils::Array<std::shared_ptr<Data>, BLOCK_SIZE> m_data;
     Header header;
   };
 
@@ -98,15 +110,12 @@ private:
 public:
   template <bool IsConst> class BlockChainIterator {
   public:
-    // Typedefs
-    // using Block = BlockChain::Block;
     using value_type = std::conditional_t<IsConst, const Data, Data>;
     using Block_ = std::conditional_t<IsConst, const Block, Block>;
 
     using reference = value_type &;
     using pointer = value_type *;
     using difference_type = std::ptrdiff_t;
-    // using iterator = BlockChainIterator<IsConst>;
 
     explicit BlockChainIterator(Block *ptr) : m_curr(ptr) {}
 
@@ -131,6 +140,7 @@ public:
 
   private:
     Block_ *m_curr = nullptr;
+    size_t m_index = 0;
   };
 
   using iterator = BlockChainIterator<false>;
