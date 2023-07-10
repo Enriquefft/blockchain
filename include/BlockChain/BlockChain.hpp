@@ -20,7 +20,7 @@ using sha_256_t = Utils::Array<uint8_t, 32 /* SHA256_DIGEST_LENGTH*/>;
 class BlockChain {
 
   inline static const uint8_t TARGET = 2;
-  inline static const uint8_t BLOCK_SIZE = 2;
+  inline static const uint8_t BLOCK_SIZE = 4;
 
 public:
   // Typedefs

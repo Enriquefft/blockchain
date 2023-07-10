@@ -1,41 +1,22 @@
+#include "B/B.hpp"
 #include "BlockChain.hpp"
-#include <iostream>
-
 #include <vector>
 
-using std::cout;
-
 int main() {
-
   cout << "Hello World!\n";
 
   blockchain::BlockChain b_chain;
+  B<Data::CompareType::MONEY_ASCENDING> btree(4);
 
   cout << "Created empty blockchain\n";
 
   b_chain.addBlock(Data("me", "you", 10));
-  b_chain.addBlock(Data("you", "me", 20));
-  b_chain.addBlock(Data("1", "2", 30));
-  b_chain.addBlock(Data("he", "she", 40));
 
   cout << "=====================================\n";
 
   for (const auto &data : b_chain) {
-    cout << data << std::endl;
+    btree.insert(&data);
   }
 
-  cout << "isConsistent?: \n"
-       << std::boolalpha << b_chain.isConsistent() << std::endl;
-
-  cout << "randomInyection" << std::endl;
-  b_chain.randomInyection();
-
-  cout << "=====================================\n";
-
-  for (const auto &data : b_chain) {
-    cout << data << std::endl;
-  }
-
-  cout << "isConsistent?: " << std::boolalpha << b_chain.isConsistent()
-       << std::endl;
+  return 0;
 }

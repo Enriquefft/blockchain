@@ -239,7 +239,25 @@ void BlockChain::randomInyection() {
   data->receiver = "RANDOM_RECEIVER" + std::to_string(data_idx);
 }
 
-void BlockChain::recalculateHashes() {}
+void BlockChain::recalculateHashes() {
+  // if (m_head == nullptr) {
+  //   return true;
+  // }
+  //
+  // auto *curr = m_head->next;
+  // auto c = 1;
+  //
+  // for (; curr != nullptr; curr = curr->next) {
+  //   if (curr->previous->hash() != curr->header.previous_hash) {
+  //     std::cout << "block " << c << " is not consistent\n";
+  //     return false;
+  //   }
+  //   std::cout << "block " << c << " is consistent\n";
+  //   c++;
+  // }
+  //
+  // return true;
+}
 
 // n
 BlockChain::size_type BlockChain::size() const {
