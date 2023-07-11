@@ -1,6 +1,7 @@
 #include "Person.hpp"
 #ifndef APP_HPP
 
+
 #include "BlockChain.hpp"
 #include "Data.hpp"
 #include "IndexStructures/IndexStructures.hpp"
@@ -29,38 +30,97 @@ public:
    * User related functions
    */
 
-  void addClient(const string &name, const string &password);
-  [[nodiscard]] bool clientExists(const string &name,
-                                  const string &password) const;
-  [[nodiscard]] const Client &getClient(const string &client) const;
-  [[nodiscard]] const Utils::Vector<Client> &getClients() const;
+  void addClient(const string &name, const string &password){
+    m_clients.addClient(&name,&password);
+  }
+  [[nodiscard]] bool clientExists(const string &name,const string &password) const{
+    return m_clients.contains(&name);
+  }
+  [[nodiscard]] const Client &getClient(const string &client) const{
+    for(const auto& forwardlist : m_clients.m_clients){
+      for (const  auto& pair : forwardlist) { 
+        if(pair.first == client) return pair.second;
+      }
+    }
+  }
+  [[nodiscard]] const Utils::Vector<Client> &getClients() const{
+    Vector<Client> clients;
+    for(const auto& forwardlist : m_clients.m_clients){
+      for (const  auto& pair : forwardlist) { 
+        if(pair.first == client) clients.push_back(pair.second);
+      }
+    }
+    return clients;
+  }
 
   /*
    * Blockchain related functions
    */
 
   // Adds a block to the blockchain and to every ACTIVE index structure
-  void addBlock(const Data &data);
+  void addBlock(const Data &data){
+    m_blockChain.addBlock(data);
+  }
 
-  [[nodiscard]] const blockchain::BlockChain &getBlockChain() const;
+  [[nodiscard]] const blockchain::BlockChain &getBlockChain() const {
+    return m_blockChain;
+
+  }
   [[nodiscard]] blockchain::BlockChainInfo getBlockChainInfo() const;
 
   /*
    * Index structure related queries
    */
   template <CompareType compareType, IndexStructures structure>
-  [[nodiscard]] const Utils::Vector<Data> &min();
+  [[nodiscard]] const Utils::Vector<Data> &min(){
+    structure<compareType>();
+    for(auto data : m_blockChain){
+      const Data *ptr = &data;
+      structure.insert(ptr);
+    }
+    Vector<const Data*> result = structure.min();
+    return result;
+  }
   template <CompareType compareType, IndexStructures structure>
-  [[nodiscard]] const Utils::Vector<Data> &max();
+  [[nodiscard]] const Utils::Vector<Data> &max(){
+    structure<compareType>();
+    for(auto data : m_blockChain){
+      const Data *ptr = &data;
+      structure.insert(ptr);
+    }
+    Vector<const Data*> result = structure.max();
+    return result;
+  }
+  template <CompareType compareType, IndexStructures structure>
+  [[nodiscard]] const Utils::Vector<Data> &contains(const getType<compareType> &value){
+    structure<compareType>();
+    for(auto data : m_blockChain){
+      const Data *ptr = &data;
+      structure.insert(ptr);
+    }
+    vector<const Data *> result = structure.getElements(value);
+  }
   template <CompareType compareType, IndexStructures structure>
   [[nodiscard]] const Utils::Vector<Data> &
-  contains(const getType<compareType> &value);
+  search(const getType<compareType> &value){
+    structure<compareType>();
+    for(auto data : m_blockChain){
+      const Data *ptr = &data;
+      structure.insert(ptr);
+    }
+    const Data *ptr = &value;
+    return structure.search(ptr);
+  }
   template <CompareType compareType, IndexStructures structure>
   [[nodiscard]] const Utils::Vector<Data> &
-  search(const getType<compareType> &value);
-  template <CompareType compareType, IndexStructures structure>
-  [[nodiscard]] const Utils::Vector<Data> &
-  rangeSearch(const getType<compareType> &min, const getType<compareType> &max);
+  rangeSearch(const getType<compareType> &min, const getType<compareType> &max){
+    structure<compareType>();
+    for(auto data : m_blockChain){
+      const Data *ptr = &data;
+      structure.insert(ptr);
+    }
+    return structure.rangeSearch(min, max);
+  }
 
 private:
   blockchain::BlockChain m_blockChain;
