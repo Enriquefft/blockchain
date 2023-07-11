@@ -1,12 +1,12 @@
 #ifndef CLIENTS_HPP
 #define CLIENTS_HPP
 
+#include "Credit/Credit.hpp"
 #include <algorithm>
 #include <mutex>
 #include <random>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <utility>
 
 namespace Person {
@@ -16,7 +16,7 @@ using std::string;
 struct Wallet {
 
   string m_wallet_id;
-  int m_balance{};
+  Credit m_balance;
 
   Wallet();
   void regenId();
@@ -29,7 +29,8 @@ private:
 
 class Client {
 public:
-  explicit Client(string username) : m_username(std::move(username)) {}
+  explicit Client(string username, string password)
+      : m_username(std::move(username)), m_password(std::move(password)) {}
 
   inline void regenWalletId() { m_wallet.regenId(); }
 
@@ -40,6 +41,7 @@ public:
 
 private:
   string m_username;
+  string m_password;
   struct Wallet m_wallet;
   inline static std::mutex mutex{};
 };
