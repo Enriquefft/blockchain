@@ -1,6 +1,14 @@
 # 🚀₿coin TecCoin₿🚀
 
-Hola! 👨‍💻 Somos estudiantes del curso de Programación IV de la Universidad de Ingeniería y Tecnología de Lima, Perú. Hemos utilizado la tecnología blockchain para el desarrollo de una criptomoneda para la comunidad utecsina.
+Hola! 👨‍💻 Somos estudiantes del curso de Programación IV de la Universidad de Ingeniería y Tecnología de Lima, Perú. El equipo está compuesto por los siguientes integrantes:
+
+- Enrique Flores
+- Luis Cortijo
+- Joel Jimenez
+- Salvador Cordova Flores
+- Cristopher Meneses
+
+Hemos utilizado la tecnología blockchain para el desarrollo de una criptomoneda para la comunidad utecsina.
 
 ## TecCoin
 
@@ -38,6 +46,3 @@ Estas APIs nos permiten acceder a diferentes recursos y servicios necesarios par
 Si estás interesado/a en ver el código y explorar más a fondo la implementación de nuestra página web, te invito a visitar el repositorio correspondiente. En el repositorio encontrarás todos los archivos y componentes necesarios para comprender y analizar la estructura y el funcionamiento de nuestra página web desarrollada con Vue.
 
 Repositorio: [https://github.com/LuisEnriqueCortijoGonzales/front](https://github.com/LuisEnriqueCortijoGonzales/front)
-#### UCoin
-#### UteCoin
-  
