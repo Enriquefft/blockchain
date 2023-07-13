@@ -1,43 +1,43 @@
-<!-- Image url format -->
-<!-- https://github.com/Enriquefft/blockchain/blob/main/Readme/name.png?raw=true-->
+# 🚀₿coin TecCoin₿🚀
 
-<!-- Mejor compatibilidad -->
-<a name="readme-top"></a>
+Hola! 👨‍💻 Somos estudiantes del curso de Programación IV de la Universidad de Ingeniería y Tecnología de Lima, Perú. Hemos utilizado la tecnología blockchain para el desarrollo de una criptomoneda para la comunidad utecsina.
 
-<!-- PROJECT SHIELDS -->
-<!-- [![displayed text][displayed image url]][link url] -->
+## TecCoin
 
-<!-- logo y titulo -->
-<div align="center">
-  <a href="https://github.com/utec-cs-aed-2023-1/proyecto-ucoin">
-    <img src="https://github.com/Enriquefft/blockchain/blob/main/Readme/logo.png?raw=true" alt="TecCoin logo" width="150" height="150">
-  </a>
-  <h1>🚀₿coin TecCoin₿🚀</h1>
-  
-  <p>
-  Hola! 👨‍💻. Somos estudiantes del curso de Programación IV de la Universidad de Ingeniería y Tecnología de Lima, Perú.  
-  Hemos utilizado la tecnologia blockchain para el desarrollo de una criptomoneda para la comunidad utecsina.
-  </p>
-</div>
+Proyecto de blockchain para Algoritmos y Estructuras de Datos.
 
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11264220&assignment_repo_type=AssignmentRepo)
+### Crédito social de ayuda
 
-# TecCoin
-Proyecto de blockchain para Algoritmos y Estructuras de Datos
+"Moneda" propia de Utec que se puede obtener mediante participación en actividades sociales/académicas:
+- Participación en clubs
+- Dar asesorías gratuitas a alumnos
+- Tas / profesores tendrán un crédito social inicial
 
-## Credito social de ayuda:
+## UteCoin
 
-#### "moneda" propia de Utec que se pueda obtener mediante participación en actividades sociales/academicas
+¿Qué es una blockchain?
 
-- participación en clubs
-- Dar asesorias gratuitas a alumnos
-- Tas / profesores tendran un credito social inicial
+Una blockchain es una estructura de datos basada en registros descentralizados con los cuales múltiples usuarios pueden establecer un registro consensuado de los datos que posee la blockchain.
 
-#### en que podran gastarla?
-- Asesorias gratuitas (Colaboración con c20a por promoción??)
-- ¿Qué otros beneficios podriamos dar?
+Aplicaciones de la blockchain en la vida cotidiana:
 
-#### TecCoin
+Al ser un registro inmutable y descentralizado, puede suplir estructuras de movimiento de datos convencionales donde existe el riesgo de intervención humana que pueda afectar significativamente la integridad de los datos. Algunos ejemplos son: elecciones para puestos de trabajo/gobierno, registro de transacciones, contratos inteligentes, entre otros.
+
+### La idea detrás de Ucoin
+
+Nuestra blockchain se puede usar en muchos rubros gracias a la versatilidad que ofrece su estructura, modificando la clase "data" a las necesidades del usuario. La idea original fue hacer un sistema de transacciones que funcione como un sistema de crédito social. Un sistema de crédito social es una forma en la cual se puede incentivar a un grupo selectivo a realizar ciertas acciones mediante un sistema de recompensas utilizando la tecnología blockchain como un sistema de registro descentralizado. Estos puntos obtenidos (UCoins) se pueden gastar/transferir para conseguir recompensas y crear un sistema microeconómico dentro de los usuarios de esta tecnología.
+
+### Estructuras del proyecto
+
+Para resaltar la funcionalidad y las capacidades de nuestro proyecto, hemos optado por desarrollar una página web utilizando la tecnología Vue. Esta elección se basa en las ventajas y características que ofrece Vue, como su capacidad para crear interfaces de usuario interactivas y su enfoque en la creación de componentes reutilizables.
+
+Para agregar funcionalidad a nuestra página web, hemos integrado las APIs proporcionadas en la documentación a la que se puede acceder en el siguiente enlace: [Documentación de la API](https://app.swaggerhub.com/apis-docs/ENRIQUEFFT04/ute-coin_rest_api/1.0.0#/)
+
+Estas APIs nos permiten acceder a diferentes recursos y servicios necesarios para que nuestro proyecto funcione correctamente. Al implementar estas APIs, hemos podido interactuar con la plataforma subyacente y aprovechar todas sus capacidades.
+
+Si estás interesado/a en ver el código y explorar más a fondo la implementación de nuestra página web, te invito a visitar el repositorio correspondiente. En el repositorio encontrarás todos los archivos y componentes necesarios para comprender y analizar la estructura y el funcionamiento de nuestra página web desarrollada con Vue.
+
+Repositorio: [https://github.com/LuisEnriqueCortijoGonzales/front](https://github.com/LuisEnriqueCortijoGonzales/front)
 #### UCoin
 #### UteCoin
   
