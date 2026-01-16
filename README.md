@@ -1,6 +1,6 @@
 # 🚀₿coin TecCoin₿🚀
 
-Hola! 👨‍💻 Somos estudiantes del curso de Programación IV de la Universidad de Ingeniería y Tecnología de Lima, Perú. El equipo está compuesto por los siguientes integrantes:
+Hola! 👨‍💻 Somos estudiantes de la Universidad de Ingeniería y Tecnología de Lima, Perú. El equipo está compuesto por los siguientes integrantes:
 
 - Enrique Flores
 - Luis Cortijo
